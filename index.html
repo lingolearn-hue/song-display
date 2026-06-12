@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#111214">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>song-display</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav id="main-nav">
+  <span class="nav-logo">song-display</span>
+  <button class="nav-tab active" data-screen="songs">Songs</button>
+  <button class="nav-tab" data-screen="setlists">Setlists</button>
+  <button class="nav-tab" data-screen="import">Import</button>
+  <button class="nav-tab" data-screen="settings">Settings</button>
+  <span class="nav-spacer"></span>
+  <button class="nav-cta">+ Add Song</button>
+</nav>
+
+<!-- ═══ SONG LIST ═══ -->
+<div id="screen-songs" class="screen">
+  <div class="song-list-layout">
+    <div class="song-search-bar">
+      <input type="text" id="song-search" placeholder="Search songs…" autocomplete="off">
+    </div>
+    <div id="song-list" class="song-list-items"></div>
+  </div>
+</div>
+
+<!-- ═══ VIEWER ═══ -->
+<div id="screen-viewer" class="screen viewer-screen">
+  <div id="tap-prev"  class="tap-zone tap-prev"></div>
+  <div id="tap-next"  class="tap-zone tap-next"></div>
+
+  <div id="viewer-text-tabs" class="viewer-text-tabs" style="display:none"></div>
+
+  <div id="viewer-content" class="viewer-content">
+    <div id="viewer-page" class="viewer-page"></div>
+  </div>
+
+  <div id="page-indicator" class="page-indicator">
+    <span id="page-current">1</span> / <span id="page-total">1</span>
+  </div>
+
+  <button id="viewer-back"  class="viewer-back">← Songs</button>
+  <button id="viewer-edit"  class="viewer-edit">Edit</button>
+
+  <div id="viewer-title-overlay" class="viewer-title-overlay">
+    <span id="overlay-title"></span>
+    <span id="overlay-artist"></span>
+  </div>
+
+  <div id="tap-menu" class="tap-menu-zone"></div>
+
+  <div id="control-drawer" class="control-drawer hidden">
+    <div class="drawer-handle"></div>
+    <div class="drawer-row">
+      <span class="drawer-label">Text size</span>
+      <div class="drawer-control">
+        <button class="ctrl-btn" id="font-down">A−</button>
+        <span class="ctrl-val" id="font-val">16</span>
+        <button class="ctrl-btn" id="font-up">A+</button>
+      </div>
+    </div>
+    <div class="drawer-row">
+      <span class="drawer-label">Transpose</span>
+      <div class="drawer-control">
+        <button class="ctrl-btn" id="transpose-down">−</button>
+        <span class="ctrl-val" id="transpose-val">0</span>
+        <button class="ctrl-btn" id="transpose-up">+</button>
+      </div>
+    </div>
+    <div class="drawer-row">
+      <span class="drawer-label">Capo</span>
+      <div class="drawer-control">
+        <button class="ctrl-btn" id="capo-down">−</button>
+        <span class="ctrl-val" id="capo-val">0</span>
+        <button class="ctrl-btn" id="capo-up">+</button>
+      </div>
+    </div>
+    <div class="drawer-divider"></div>
+    <div class="drawer-row">
+      <span class="drawer-label">Auto-scroll</span>
+      <div class="drawer-control">
+        <button class="ctrl-btn" id="scroll-slower">−</button>
+        <button class="ctrl-btn scroll-toggle-btn" id="scroll-toggle">▶ Start</button>
+        <button class="ctrl-btn" id="scroll-faster">+</button>
+      </div>
+    </div>
+    <div class="drawer-row">
+      <span class="drawer-label">Layout</span>
+      <div class="drawer-control">
+        <button class="ctrl-btn layout-btn active" data-cols="1">Single</button>
+        <button class="ctrl-btn layout-btn" data-cols="2">Double</button>
+      </div>
+    </div>
+    <div class="drawer-row">
+      <span class="drawer-label">Night mode</span>
+      <div class="toggle on" id="night-toggle"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SETLISTS ═══ -->
+<div id="screen-setlists" class="screen">
+  <div class="setlist-layout">
+    <div class="setlist-sidebar">
+      <div class="panel-header">
+        Setlists
+        <button class="panel-icon-btn" id="new-setlist-btn">+</button>
+      </div>
+      <div class="setlist-list" id="setlist-list"></div>
+    </div>
+    <div class="setlist-main" id="setlist-main">
+      <div class="setlist-empty">Select a setlist</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ IMPORT ═══ -->
+<div id="screen-import" class="screen">
+  <div class="import-layout">
+    <div class="import-methods">
+      <div class="import-method active" data-method="paste">
+        <span class="method-icon">📋</span> Paste text
+      </div>
+      <div class="import-method" data-method="url">
+        <span class="method-icon">🔗</span> From URL
+      </div>
+      <div class="import-method" data-method="file">
+        <span class="method-icon">📄</span> File upload
+      </div>
+      <div class="import-method" data-method="ocr">
+        <span class="method-icon">📷</span> Photo / OCR
+      </div>
+      <div class="import-method" data-method="manual">
+        <span class="method-icon">✏️</span> Manual entry
+      </div>
+    </div>
+
+    <div class="import-panel">
+
+      <div id="import-paste" class="import-pane active-pane">
+        <h3>Paste text</h3>
+        <p>ChordPro, tab-style (chord lines above lyrics), or plain text — auto-detected.</p>
+        <textarea id="paste-input" class="import-textarea"
+          placeholder="[C]I heard there was a [Am]secret chord…&#10;&#10;or tab-style:&#10;&#10;C           Am&#10;I heard there was a secret chord"></textarea>
+        <button class="btn-primary" id="paste-detect">Detect &amp; Preview</button>
+        <div id="import-preview" class="import-preview" style="display:none">
+          <div class="preview-meta">
+            <input type="text" id="preview-title"  class="preview-field" placeholder="Title">
+            <input type="text" id="preview-artist" class="preview-field" placeholder="Artist">
+            <span id="preview-format" class="preview-badge"></span>
+          </div>
+          <div id="preview-render" class="preview-render"></div>
+          <button class="btn-primary" id="preview-save">Save Song</button>
+        </div>
+      </div>
+
+      <div id="import-url" class="import-pane">
+        <h3>Import from URL</h3>
+        <p>Paste a link from a supported site. Fetched via CORS proxy.</p>
+        <div class="url-row">
+          <input type="text" id="url-input" class="url-input" placeholder="https://www.ultimate-guitar.com/…">
+          <button class="btn-primary" id="url-fetch">Fetch</button>
+        </div>
+        <div class="site-badges">
+          <span class="site-badge ok">✓ Ultimate Guitar</span>
+          <span class="site-badge ok">✓ Chordie</span>
+          <span class="site-badge ok">✓ E-Chords</span>
+        </div>
+        <p class="hint" id="url-status"></p>
+        <div id="url-preview" class="import-preview" style="display:none">
+          <div class="preview-meta">
+            <input type="text" id="url-preview-title"  class="preview-field" placeholder="Title">
+            <input type="text" id="url-preview-artist" class="preview-field" placeholder="Artist">
+            <span id="url-preview-format" class="preview-badge"></span>
+          </div>
+          <div id="url-preview-render" class="preview-render"></div>
+          <button class="btn-primary" id="url-preview-save">Save Song</button>
+        </div>
+      </div>
+
+      <div id="import-file" class="import-pane">
+        <h3>File upload</h3>
+        <p>Supported: .chordpro · .cho · .txt · .sdng · .sbook</p>
+        <div class="drop-zone" id="file-drop">
+          <div class="drop-icon">📂</div>
+          Drop files here, or click to browse
+        </div>
+        <p class="hint">.sbook files import as a batch. Other files feed into the paste preview.</p>
+        <input type="file" id="file-input-hidden" accept=".chordpro,.cho,.txt,.sdng,.sbook" style="display:none">
+      </div>
+
+      <div id="import-ocr" class="import-pane">
+        <h3>Photo / OCR</h3>
+        <p>Upload a photo or screenshot.</p>
+        <div class="drop-zone">
+          <div class="drop-icon">📷</div>
+          Drop image here, or click to browse
+          <input type="file" class="file-input-overlay" accept="image/*">
+        </div>
+        <p class="hint">OCR pipeline coming in v0.4 (Tesseract.js).</p>
+      </div>
+
+      <div id="import-manual" class="import-pane">
+        <h3>Manual entry</h3>
+        <p>Write in ChordPro format or plain text.</p>
+        <textarea id="manual-input" class="import-textarea tall"
+          placeholder="{title: Song Title}&#10;{artist: Artist Name}&#10;{key: C}&#10;&#10;{start_of_verse: Verse 1}&#10;[C]I heard there was a [Am]secret chord&#10;{end_of_verse}"></textarea>
+        <button class="btn-primary" id="manual-preview">Preview &amp; Save</button>
+        <div id="manual-import-preview" class="import-preview" style="display:none">
+          <div class="preview-meta">
+            <input type="text" id="manual-preview-title"  class="preview-field" placeholder="Title">
+            <input type="text" id="manual-preview-artist" class="preview-field" placeholder="Artist">
+            <span id="manual-preview-format" class="preview-badge"></span>
+          </div>
+          <div id="manual-preview-render" class="preview-render"></div>
+          <button class="btn-primary" id="manual-preview-save">Save Song</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SETTINGS ═══ -->
+<div id="screen-settings" class="screen">
+  <div class="settings-inner">
+    <div class="settings-section">
+      <div class="settings-heading">Display</div>
+      <div class="setting-row">
+        <div class="setting-info"><div class="setting-label">Night mode</div></div>
+        <div class="toggle on" id="settings-night-toggle"></div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">Default font size</div>
+          <div class="setting-sub">Song display body text</div>
+        </div>
+        <div class="inline-ctrl">
+          <button class="ctrl-btn" id="settings-font-down">−</button>
+          <span class="ctrl-val" id="settings-font-val">16</span>
+          <button class="ctrl-btn" id="settings-font-up">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-heading">Chord display</div>
+      <div class="setting-row">
+        <div class="setting-info"><div class="setting-label">Notation</div></div>
+        <select class="setting-select">
+          <option>English (C D E…)</option>
+          <option>Solfège (Do Re Mi…)</option>
+          <option>German (H for B)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-heading">Import</div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">CORS proxy URL</div>
+          <div class="setting-sub">Used for URL import</div>
+        </div>
+        <input type="text" id="settings-proxy" class="preview-field"
+          style="width:200px;font-size:11px"
+          value="https://api.allorigins.win/get?url=">
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-heading">Data</div>
+      <div class="setting-row">
+        <div class="setting-info"><div class="setting-label">Export all songs (.sbook)</div></div>
+        <button class="btn-sm" id="export-sbook">Export</button>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">Clear all data</div>
+          <div class="setting-sub danger">Cannot be undone</div>
+        </div>
+        <button class="btn-sm danger" id="clear-data">Clear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SONG EDITOR (slide-in panel) ═══ -->
+<div id="editor-backdrop" class="editor-backdrop"></div>
+<div id="editor-panel" class="editor-panel">
+  <div class="editor-header">
+    <span class="editor-title">Edit Song</span>
+    <button id="editor-close" class="editor-close">✕</button>
+  </div>
+
+  <div class="editor-body">
+    <div class="editor-section">
+      <div class="editor-heading">Song info</div>
+      <div class="editor-field-row">
+        <label>Title</label>
+        <input type="text" id="edit-title" class="editor-input" placeholder="Song title">
+      </div>
+      <div class="editor-field-row">
+        <label>Artist</label>
+        <input type="text" id="edit-artist" class="editor-input" placeholder="Artist name">
+      </div>
+      <div class="editor-field-row three-col">
+        <div>
+          <label>Key</label>
+          <input type="text" id="edit-key" class="editor-input" placeholder="C" maxlength="4">
+        </div>
+        <div>
+          <label>Capo</label>
+          <input type="number" id="edit-capo" class="editor-input" min="0" max="12" value="0">
+        </div>
+        <div>
+          <label>BPM</label>
+          <input type="number" id="edit-bpm" class="editor-input" min="20" max="300" placeholder="—">
+        </div>
+      </div>
+    </div>
+
+    <div class="editor-section">
+      <div class="editor-heading">Texts</div>
+      <div id="edit-text-tabs" class="edit-text-tabs"></div>
+
+      <div class="editor-field-row two-col">
+        <div>
+          <label>Label</label>
+          <input type="text" id="edit-text-label" class="editor-input" placeholder="Original">
+        </div>
+        <div>
+          <label>Format</label>
+          <select id="edit-text-format" class="editor-input">
+            <option value="chordpro">ChordPro</option>
+            <option value="plain">Plain</option>
+            <option value="raw">Raw</option>
+          </select>
+        </div>
+      </div>
+      <div class="editor-field-row">
+        <label>Language</label>
+        <input type="text" id="edit-text-lang" class="editor-input" placeholder="en, de, fr… (optional)">
+      </div>
+      <div class="editor-field-row">
+        <label>Content</label>
+        <textarea id="edit-text-content" class="editor-textarea"></textarea>
+      </div>
+      <button class="btn-sm danger" id="edit-delete-text" style="margin-top:6px">Delete this text</button>
+    </div>
+  </div>
+
+  <div class="editor-footer">
+    <button class="btn-sm danger" id="editor-delete">Delete song</button>
+    <span style="flex:1"></span>
+    <button class="btn-sm" id="editor-close-2" onclick="document.getElementById('editor-close').click()">Cancel</button>
+    <button class="btn-primary" id="editor-save">Save</button>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="db.js"></script>
+<script src="parser.js"></script>
+<script src="viewer.js"></script>
+<script src="fetcher.js"></script>
+<script src="editor.js"></script>
+<script src="setlist-manager.js"></script>
+<script src="app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
