@@ -1,24 +1,23 @@
-// viewer.js v0.2 — DOM-measured pagination, section-aware, multi-text tabs
+// viewer.js v0.4 — ruby-style chord rendering, DOM-measured pagination
 
 const Viewer = (() => {
 
-  // ── State ──────────────────────────────────────────────
-  let song        = null;
+  let song          = null;
   let activeTextIdx = 0;
-  let pages       = [];
-  let currentPage = 0;
-  let fontSize    = 16;
-  let transpose   = 0;
-  let capo        = 0;
-  let columns     = 1;
-  let scrolling   = false;
-  let scrollRaf   = null;
-  let scrollSpeed = 40;
-  let scrollOffset= 0;
-  let lastTs      = null;
-  let drawerOpen  = false;
+  let pages         = [];
+  let currentPage   = 0;
+  let fontSize      = 16;
+  let transpose     = 0;
+  let capo          = 0;
+  let columns       = 1;
+  let scrolling     = false;
+  let scrollRaf     = null;
+  let scrollSpeed   = 40;
+  let scrollOffset  = 0;
+  let lastTs        = null;
+  let drawerOpen    = false;
 
-  const $ = id => document.getElementById(id);
+  const $  = id => document.getElementById(id);
   const el = {
     viewerPage:    () => $('viewer-page'),
     viewerContent: () => $('viewer-content'),
@@ -36,7 +35,44 @@ const Viewer = (() => {
     textTabs:      () => $('viewer-text-tabs'),
   };
 
-  // ── Render one section to a DocumentFragment ────────────
+  // ── Render a line of tokens (ruby-style) ─────────────────
+  // Each token = { chord: string|null, text: string }
+  // Tokens with a chord render as an inline wrapper with the chord
+  // floating above via ::before / absolute positioning.
+  function renderLine(tokens) {
+    const lineEl = document.createElement('div');
+    lineEl.className = 'lyric-line';
+
+    // Check if any token in this line has a chord
+    const hasChords = tokens.some(t => t.chord);
+    if (hasChords) lineEl.classList.add('has-chords');
+
+    tokens.forEach(tok => {
+      if (tok.chord) {
+        // Wrapper: chord floats above the text
+        const wrap = document.createElement('span');
+        wrap.className = 'chord-wrap';
+
+        const chEl = document.createElement('span');
+        chEl.className = 'chord-above';
+        chEl.textContent = tok.chord;
+
+        wrap.appendChild(chEl);
+
+        if (tok.text) {
+          wrap.appendChild(document.createTextNode(tok.text));
+        }
+        lineEl.appendChild(wrap);
+      } else if (tok.text) {
+        // Plain text — no chord above
+        lineEl.appendChild(document.createTextNode(tok.text));
+      }
+    });
+
+    return lineEl;
+  }
+
+  // ── Render a full section to a DOM element ───────────────
   function renderSection(sec) {
     const frag = document.createDocumentFragment();
 
@@ -47,35 +83,14 @@ const Viewer = (() => {
       frag.appendChild(lbl);
     }
 
-    sec.rows.forEach(row => {
-      if (row.type === 'chord') {
-        const span = document.createElement('span');
-        span.className = 'chord-line';
-        row.text.split(/( +)/).forEach(part => {
-          if (!part.trim()) {
-            span.appendChild(document.createTextNode(part));
-          } else {
-            const cs = document.createElement('span');
-            cs.className = 'chord-token';
-            cs.textContent = part;
-            span.appendChild(cs);
-          }
-        });
-        frag.appendChild(span);
-      } else {
-        const span = document.createElement('span');
-        span.className = 'lyric-line';
-        span.textContent = row.text;
-        frag.appendChild(span);
-      }
+    sec.lines.forEach(tokens => {
+      frag.appendChild(renderLine(tokens));
     });
 
     return frag;
   }
 
   // ── DOM-measured pagination ──────────────────────────────
-  // Sections are never split. A section taller than one full page
-  // gets its own page (it may overflow rather than cut mid-section).
   function paginate(sections) {
     const contentEl = el.viewerContent();
     const pageEl    = el.viewerPage();
@@ -85,29 +100,20 @@ const Viewer = (() => {
     const padBottom = parseFloat(cs.paddingBottom) || 80;
     const availH    = contentEl.clientHeight - padTop - padBottom;
     const availW    = contentEl.clientWidth
-                      - (parseFloat(cs.paddingLeft) || 32)
-                      - (parseFloat(cs.paddingRight) || 32);
+                    - (parseFloat(cs.paddingLeft)  || 32)
+                    - (parseFloat(cs.paddingRight) || 32);
 
-    // Hidden measurement container
     const probe = document.createElement('div');
     probe.setAttribute('aria-hidden', 'true');
     probe.style.cssText = [
-      'position:absolute',
-      'visibility:hidden',
-      'pointer-events:none',
-      'top:0',
-      'left:0',
+      'position:absolute', 'visibility:hidden', 'pointer-events:none',
+      'top:0', 'left:0',
       `width:${availW}px`,
       `font-family:${cs.fontFamily}`,
       `font-size:${fontSize}px`,
       `line-height:${cs.lineHeight}`,
-      'white-space:pre-wrap',
-      'word-break:break-word',
     ].join(';');
-    if (columns === 2) {
-      probe.style.columns   = '2';
-      probe.style.columnGap = '40px';
-    }
+    if (columns === 2) { probe.style.columns = '2'; probe.style.columnGap = '40px'; }
     document.body.appendChild(probe);
 
     const result       = [];
@@ -116,7 +122,6 @@ const Viewer = (() => {
     const GAP          = 8;
 
     sections.forEach(sec => {
-      // Measure section height in isolation
       const wrapper = document.createElement('div');
       wrapper.appendChild(renderSection(sec));
       probe.innerHTML = '';
@@ -124,15 +129,14 @@ const Viewer = (() => {
       const secH = wrapper.getBoundingClientRect().height;
 
       if (pageSections.length === 0) {
-        // Always place first section (even if oversized)
-        pageSections.push({ sec, h: secH });
+        pageSections.push({ sec, secH });
         usedH = secH;
       } else if (usedH + GAP + secH <= availH) {
-        pageSections.push({ sec, h: secH });
+        pageSections.push({ sec, secH });
         usedH += GAP + secH;
       } else {
         result.push(pageSections.map(x => x.sec));
-        pageSections = [{ sec, h: secH }];
+        pageSections = [{ sec, secH }];
         usedH = secH;
       }
     });
@@ -142,13 +146,13 @@ const Viewer = (() => {
     return result.length ? result : [[]];
   }
 
-  // ── Display page ─────────────────────────────────────────
+  // ── Display a page ───────────────────────────────────────
   function showPage(index) {
     currentPage = Math.max(0, Math.min(index, pages.length - 1));
     const pageEl = el.viewerPage();
-    pageEl.innerHTML = '';
+    pageEl.innerHTML  = '';
     pageEl.style.fontSize = fontSize + 'px';
-    pageEl.className = 'viewer-page' + (columns === 2 ? ' two-col' : '');
+    pageEl.className  = 'viewer-page' + (columns === 2 ? ' two-col' : '');
 
     (pages[currentPage] || []).forEach((sec, i) => {
       const wrapper = document.createElement('div');
@@ -162,12 +166,8 @@ const Viewer = (() => {
     el.pageTotal().textContent   = pages.length;
   }
 
-  function nextPage() {
-    if (currentPage < pages.length - 1) { flash('right'); showPage(currentPage + 1); }
-  }
-  function prevPage() {
-    if (currentPage > 0) { flash('left'); showPage(currentPage - 1); }
-  }
+  function nextPage() { if (currentPage < pages.length - 1) { flash('right'); showPage(currentPage + 1); } }
+  function prevPage() { if (currentPage > 0)                { flash('left');  showPage(currentPage - 1); } }
 
   function flash(dir) {
     const c = el.viewerContent();
@@ -180,7 +180,7 @@ const Viewer = (() => {
   // ── Re-render ─────────────────────────────────────────────
   function rerender() {
     if (!song) return;
-    const text = song.texts[activeTextIdx] || song.texts[0];
+    const text     = song.texts[activeTextIdx] || song.texts[0];
     const sections = Parser.parseChordPro(text.content, transpose);
     pages = paginate(sections);
     showPage(Math.min(currentPage, pages.length - 1));
@@ -191,21 +191,13 @@ const Viewer = (() => {
   function buildTextTabs() {
     const tabBar = el.textTabs();
     tabBar.innerHTML = '';
-    if (!song || song.texts.length <= 1) {
-      tabBar.style.display = 'none';
-      return;
-    }
+    if (!song || song.texts.length <= 1) { tabBar.style.display = 'none'; return; }
     tabBar.style.display = 'flex';
     song.texts.forEach((text, i) => {
       const btn = document.createElement('button');
       btn.className = 'text-tab' + (i === activeTextIdx ? ' active' : '');
       btn.textContent = text.label || ('Text ' + (i + 1));
-      btn.addEventListener('click', () => {
-        activeTextIdx = i;
-        buildTextTabs();
-        currentPage = 0;
-        rerender();
-      });
+      btn.addEventListener('click', () => { activeTextIdx = i; buildTextTabs(); currentPage = 0; rerender(); });
       tabBar.appendChild(btn);
     });
   }
@@ -220,7 +212,7 @@ const Viewer = (() => {
     const text     = song.texts[activeTextIdx] || song.texts[0];
     const sections = Parser.parseChordPro(text.content, transpose);
     const pageEl   = el.viewerPage();
-    pageEl.innerHTML = '';
+    pageEl.innerHTML  = '';
     pageEl.style.fontSize = fontSize + 'px';
     pageEl.style.height   = 'auto';
     pageEl.style.overflow = 'visible';
@@ -264,9 +256,7 @@ const Viewer = (() => {
     scrollOffset += scrollSpeed * dt;
     const c = el.viewerContent();
     c.scrollTop = scrollOffset;
-    if (c.scrollTop >= c.scrollHeight - c.clientHeight - 4) {
-      stopScroll(); return;
-    }
+    if (c.scrollTop >= c.scrollHeight - c.clientHeight - 4) { stopScroll(); return; }
     scrollRaf = requestAnimationFrame(scrollTick);
   }
 
@@ -277,14 +267,12 @@ const Viewer = (() => {
 
   function syncDrawer() {
     el.fontVal().textContent = fontSize;
-    el.transposeVal().textContent =
-      transpose === 0 ? '0' : (transpose > 0 ? '+' : '') + transpose;
+    el.transposeVal().textContent = transpose === 0 ? '0' : (transpose > 0 ? '+' : '') + transpose;
     el.capoVal().textContent = capo;
     const sfv = $('settings-font-val');
     if (sfv) sfv.textContent = fontSize;
   }
 
-  // ── Title overlay ─────────────────────────────────────────
   function showTitleOverlay() {
     el.overlayTitle().textContent  = song.title;
     el.overlayArtist().textContent = song.artist || '';
@@ -310,14 +298,8 @@ const Viewer = (() => {
 
   // ── Init ──────────────────────────────────────────────────
   function init() {
-    $('tap-next').addEventListener('click', () => {
-      if (drawerOpen) { closeDrawer(); return; }
-      if (!scrolling) nextPage();
-    });
-    $('tap-prev').addEventListener('click', () => {
-      if (drawerOpen) { closeDrawer(); return; }
-      if (!scrolling) prevPage();
-    });
+    $('tap-next').addEventListener('click', () => { if (drawerOpen) { closeDrawer(); return; } if (!scrolling) nextPage(); });
+    $('tap-prev').addEventListener('click', () => { if (drawerOpen) { closeDrawer(); return; } if (!scrolling) prevPage(); });
     $('tap-menu').addEventListener('click', toggleDrawer);
 
     document.addEventListener('keydown', e => {
@@ -327,15 +309,15 @@ const Viewer = (() => {
       if (e.key === 'Escape') closeDrawer();
     });
 
-    $('font-up').addEventListener('click',          () => { fontSize = Math.min(28, fontSize+1); rerender(); });
-    $('font-down').addEventListener('click',        () => { fontSize = Math.max(11, fontSize-1); rerender(); });
-    $('transpose-up').addEventListener('click',     () => { transpose = Math.min(6,  transpose+1); rerender(); });
-    $('transpose-down').addEventListener('click',   () => { transpose = Math.max(-6, transpose-1); rerender(); });
-    $('capo-up').addEventListener('click',          () => { capo = Math.min(9, capo+1); el.capoVal().textContent = capo; });
-    $('capo-down').addEventListener('click',        () => { capo = Math.max(0, capo-1); el.capoVal().textContent = capo; });
-    $('scroll-toggle').addEventListener('click',    () => scrolling ? stopScroll() : startScroll());
-    $('scroll-faster').addEventListener('click',    () => { scrollSpeed = Math.min(200, scrollSpeed+8); });
-    $('scroll-slower').addEventListener('click',    () => { scrollSpeed = Math.max(8,   scrollSpeed-8); });
+    $('font-up').addEventListener('click',        () => { fontSize = Math.min(28, fontSize+1); rerender(); });
+    $('font-down').addEventListener('click',      () => { fontSize = Math.max(11, fontSize-1); rerender(); });
+    $('transpose-up').addEventListener('click',   () => { transpose = Math.min(6,  transpose+1); rerender(); });
+    $('transpose-down').addEventListener('click', () => { transpose = Math.max(-6, transpose-1); rerender(); });
+    $('capo-up').addEventListener('click',        () => { capo = Math.min(9, capo+1); el.capoVal().textContent = capo; });
+    $('capo-down').addEventListener('click',      () => { capo = Math.max(0, capo-1); el.capoVal().textContent = capo; });
+    $('scroll-toggle').addEventListener('click',  () => scrolling ? stopScroll() : startScroll());
+    $('scroll-faster').addEventListener('click',  () => { scrollSpeed = Math.min(200, scrollSpeed+8); });
+    $('scroll-slower').addEventListener('click',  () => { scrollSpeed = Math.max(8,   scrollSpeed-8); });
 
     document.querySelectorAll('.layout-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -348,23 +330,18 @@ const Viewer = (() => {
 
     function syncNight(on) {
       document.body.classList.toggle('day-mode', !on);
-      ['night-toggle','settings-night-toggle'].forEach(id => {
-        const t = $(id); if (t) t.classList.toggle('on', on);
-      });
+      ['night-toggle','settings-night-toggle'].forEach(id => { const t = $(id); if (t) t.classList.toggle('on', on); });
       DB.setSetting('nightMode', on);
     }
-    $('night-toggle').addEventListener('click', function() { syncNight(!this.classList.contains('on')); });
+    $('night-toggle').addEventListener('click',          function() { syncNight(!this.classList.contains('on')); });
     $('settings-night-toggle').addEventListener('click', function() { syncNight(!this.classList.contains('on')); });
+    $('settings-font-up').addEventListener('click',      () => { fontSize = Math.min(28, fontSize+1); rerender(); });
+    $('settings-font-down').addEventListener('click',    () => { fontSize = Math.max(11, fontSize-1); rerender(); });
 
-    $('settings-font-up').addEventListener('click',   () => { fontSize = Math.min(28, fontSize+1); rerender(); });
-    $('settings-font-down').addEventListener('click', () => { fontSize = Math.max(11, fontSize-1); rerender(); });
-
-    // Swipe drawer closed
     let ty0 = 0;
     el.drawer().addEventListener('touchstart', e => { ty0 = e.touches[0].clientY; }, { passive: true });
     el.drawer().addEventListener('touchend',   e => { if (e.changedTouches[0].clientY - ty0 > 60) closeDrawer(); }, { passive: true });
 
-    // Restore settings
     DB.getSetting('fontSize',  16).then(v => { fontSize = v; syncDrawer(); });
     DB.getSetting('nightMode', true).then(v => syncNight(v));
   }
