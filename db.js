@@ -93,8 +93,15 @@ const DB = (() => {
   }
 
   // ── Seed with sample data if empty ───────────────────────
+  // Also removes old copyrighted sample songs if present from v0.1/v0.2.
   async function seedIfEmpty() {
     await open();
+    // IDs used in v0.1/v0.2 for copyrighted songs — remove them
+    const oldIds = ['1','2','3','4','5','6'];
+    for (const id of oldIds) {
+      const s = await getSong(id);
+      if (s) await deleteSong(id);
+    }
     const existing = await getAllSongs();
     if (existing.length > 0) return false;
     for (const song of SONGS)    await putSong({ ...song });
