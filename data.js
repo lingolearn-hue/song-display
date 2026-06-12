@@ -1780,41 +1780,6 @@ And the [C]one who has loved you so [G]true
     ]
   },
 
-];
-
-// ── Demo setlists ─────────────────────────────────────────
-
-const SETLISTS = [
-  {
-    id: 'sl-demo-1',
-    name: 'Folk Evening',
-    songIds: ['pd-001','pd-003','pd-005','pd-006','pd-029','pd-030']
-  },
-  {
-    id: 'sl-demo-2',
-    name: 'Hymns & Spirituals',
-    songIds: ['pd-002','pd-004','pd-008','pd-009']
-  },
-  {
-    id: 'sl-demo-3',
-    name: 'National Anthems',
-    songIds: ['pd-022','pd-023','pd-024','pd-025','pd-026','pd-027','pd-028']
-  },
-  {
-    id: 'sl-demo-4',
-    name: 'Multilingual',
-    songIds: ['pd-012','pd-013','pd-015','pd-019','pd-021']
-  },
-  {
-    id: 'sl-demo-5',
-    name: 'Deutsche Volkslieder',
-    songIds: ['pd-013','pd-014','pd-024','pd-031','pd-032','pd-033','pd-034','pd-035','pd-036','pd-037','pd-038']
-  },
-  {
-    id: 'sl-demo-6',
-    name: '中文歌曲 (Chinese Songs)',
-    songIds: ['pd-039','pd-040','pd-041','pd-042','pd-043','pd-044','pd-045','pd-046']
-  },
 
   // ── Deutsche Weihnachtslieder ────────────────────────────
 
@@ -1898,17 +1863,6 @@ How [C7]lovely are thy [F]branches
 [G]Jauchzen dir [D7]Ehre
 [G]Freue, freue [D7]dich, o [G]Christen[D7]heit
 {end_of_verse}`
-      },
-      {
-        id: 'pd-048-t2', label: 'English', format: 'chordpro', language: 'en',
-        content: `{start_of_verse: Verse 1}
-[G]O how joyful
-[D7]O how blessed
-[G]O how mercifully [D7]comes Christ[G]mas
-[G]World was [C]lost then
-[G]Christ came to [D7]save us
-[G]Rejoice, rejoice [D7]O Christen[G]dom
-{end_of_verse}`
       }
     ]
   },
@@ -1966,10 +1920,9 @@ Shall be the joy of [G7]all the earth
     title: 'Ihr Kinderlein kommet',
     artist: 'Christoph von Schmid (1798)',
     key: 'G', capo: 0, bpm: 80,
-    texts: [
-      {
-        id: 'pd-050-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
-        content: `{start_of_verse: Strophe 1}
+    texts: [{
+      id: 'pd-050-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
+      content: `{start_of_verse: Strophe 1}
 [G]Ihr Kinderlein kommet o [D7]kommet doch all
 Zur Krippe her kommet in [G]Bethlehems Stall
 Und seht was in dieser [C]hochheiligen Nacht
@@ -1981,16 +1934,8 @@ Der [G]Vater im Himmel für [D7]Freude uns [G]macht
 Ein himmlisches Kind viel [G]schöner als Lanz
 Es liegt auch im Dunkeln und [C]Kälte so lind
 Wie [G]schlummert so süße das [D7]himmlische [G]Kind
-{end_of_verse}
-
-{start_of_verse: Strophe 3}
-[G]Wer lag in dem Kripplein auf [D7]Heu und auf Stroh
-Maria und Josef be[G]trachten es froh
-Den redlichen Hirten er[C]schallet es weit
-Hier [G]wohnet in Armut die [D7]Herrlich[G]keit
 {end_of_verse}`
-      }
-    ]
+    }]
   },
 
   {
@@ -2091,18 +2036,7 @@ Lasst mich nicht er[G7]frieren
 Gute Dinge wunder[C]bar
 [G7]Kindlein betet betet fein
 Schlafet süß im [C]Mondenschein
-{end_of_verse}
-
-{start_of_chorus: Refrain}
-[C]Kling Glöckchen klingelingeling
-[C]Kling Glöckchen kling
-[F]Lasst mich ein ihr [C]Kinder
-Ist so kalt der [G7]Winter
-Öffnet mir die [C]Türen
-Lasst mich nicht er[G7]frieren
-[C]Kling Glöckchen klingelingeling
-[C]Kling Glöckchen kling
-{end_of_chorus}`
+{end_of_verse}`
     }]
   },
 
@@ -2228,4 +2162,44 @@ Eurer Liebe [G7]Quell und [C]Well
     }]
   },
 
+];
+
+// ── Demo setlists ─────────────────────────────────────────
+
+const SETLISTS = [
+  {
+    id: 'sl-demo-1',
+    name: 'Folk Evening',
+    songIds: ['pd-001','pd-003','pd-005','pd-006','pd-029','pd-030']
+  },
+  {
+    id: 'sl-demo-2',
+    name: 'Hymns & Spirituals',
+    songIds: ['pd-002','pd-004','pd-008','pd-009']
+  },
+  {
+    id: 'sl-demo-3',
+    name: 'National Anthems',
+    songIds: ['pd-022','pd-023','pd-024','pd-025','pd-026','pd-027','pd-028']
+  },
+  {
+    id: 'sl-demo-4',
+    name: 'Multilingual',
+    songIds: ['pd-012','pd-013','pd-015','pd-019','pd-021']
+  },
+  {
+    id: 'sl-demo-5',
+    name: 'Deutsche Volkslieder',
+    songIds: ['pd-013','pd-014','pd-024','pd-031','pd-032','pd-033','pd-034','pd-035','pd-036','pd-037','pd-038']
+  },
+  {
+    id: 'sl-demo-6',
+    name: '中文歌曲 (Chinese Songs)',
+    songIds: ['pd-039','pd-040','pd-041','pd-042','pd-043','pd-044','pd-045','pd-046']
+  },
+  {
+    id: 'sl-demo-7',
+    name: '🎄 Weihnachtslieder',
+    songIds: ['pd-012','pd-047','pd-048','pd-049','pd-050','pd-051','pd-052','pd-053','pd-054','pd-055','pd-056','pd-057']
+  },
 ];
