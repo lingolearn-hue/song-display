@@ -1,6 +1,6 @@
 // sw.js — song-display service worker
 // APP_VERSION must be bumped with every release that changes cached files.
-const APP_VERSION = '3.1';
+const APP_VERSION = '4.0';
 const CACHE       = 'song-display-' + APP_VERSION;
 
 const APP_SHELL = [
@@ -13,6 +13,7 @@ const APP_SHELL = [
   './fetcher.js',
   './editor.js',
   './setlist-manager.js',
+  './ocr.js',
   './app.js',
   './manifest.json',
 ];
