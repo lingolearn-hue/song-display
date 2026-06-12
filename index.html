@@ -56,6 +56,17 @@
     <span id="overlay-artist"></span>
   </div>
 
+  <!-- Voice status indicator -->
+  <div id="voice-status" class="voice-status"></div>
+
+  <!-- Next-song bar (shows at end of last page when queue has more) -->
+  <div id="next-song-bar" class="next-song-bar">
+    <span class="next-song-label">Next up:</span>
+    <span class="next-song-title"></span>
+    <button class="next-song-advance btn-primary">▶ Play</button>
+    <button class="next-song-dismiss btn-sm">✕</button>
+  </div>
+
   <div id="tap-menu" class="tap-menu-zone"></div>
 
   <div id="control-drawer" class="control-drawer hidden">
@@ -94,12 +105,28 @@
       </div>
     </div>
     <div class="drawer-row">
+      <span class="drawer-label">Voice page turn</span>
+      <div class="drawer-control">
+        <button class="ctrl-btn" id="voice-toggle">🎤 Voice</button>
+      </div>
+    </div>
+
+    <div class="drawer-row">
       <span class="drawer-label">Layout</span>
       <div class="drawer-control">
         <button class="ctrl-btn layout-btn active" data-cols="1">Single</button>
         <button class="ctrl-btn layout-btn" data-cols="2">Double</button>
       </div>
     </div>
+    <div class="drawer-row">
+      <span class="drawer-label">BPM</span>
+      <div class="drawer-control">
+        <button class="ctrl-btn" id="tap-tempo-btn">Tap</button>
+        <span class="ctrl-val" id="tap-tempo-val">—</span>
+        <button class="ctrl-btn" id="tap-tempo-use" title="Use as scroll speed">↑ Use</button>
+      </div>
+    </div>
+
     <div class="drawer-row">
       <span class="drawer-label">Night mode</span>
       <div class="toggle on" id="night-toggle"></div>
@@ -395,6 +422,7 @@
 <script src="fetcher.js"></script>
 <script src="editor.js"></script>
 <script src="setlist-manager.js"></script>
+<script src="voice.js"></script>
 <script src="ocr.js"></script>
 <script src="app.js"></script>
 <script>
