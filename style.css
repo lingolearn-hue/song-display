@@ -1185,3 +1185,32 @@ body.editor-open .editor-backdrop {
   border-color: var(--chord);
   background: var(--chord-bg);
 }
+
+/* ── Update available banner ── */
+.update-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--chord);
+  color: #0d1117;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 9999;
+}
+.update-banner button {
+  background: rgba(0,0,0,.15);
+  border: none;
+  border-radius: 5px;
+  color: #0d1117;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+.update-banner button:hover { background: rgba(0,0,0,.25); }
