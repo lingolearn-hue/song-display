@@ -94,7 +94,7 @@ const DB = (() => {
 
   // ── Data versioning & migration ───────────────────────────
   // Bump DATA_VERSION whenever sample data changes or a migration is needed.
-  const DATA_VERSION = 4;  // v0.4.1: added German folk + Chinese songs
+  const DATA_VERSION = 5;  // v0.6: added German Christmas songs
 
   async function migrate() {
     await open();
@@ -148,6 +148,21 @@ const DB = (() => {
         const sl = SETLISTS.find(s => s.id === id);
         if (sl) await putSetlist({ ...sl });
       }
+    }
+
+    // v4→v5: add German Christmas songs
+    if (stored < 5) {
+      const newIds = ['pd-047','pd-048','pd-049','pd-050','pd-051','pd-052',
+                      'pd-053','pd-054','pd-055','pd-056','pd-057'];
+      for (const id of newIds) {
+        const existing = await getSong(id);
+        if (!existing) {
+          const song = SONGS.find(s => s.id === id);
+          if (song) await putSong({ ...song });
+        }
+      }
+      const xmasSl = SETLISTS.find(s => s.id === 'sl-demo-7');
+      if (xmasSl) await putSetlist({ ...xmasSl });
     }
 
     await setSetting('dataVersion', DATA_VERSION);
