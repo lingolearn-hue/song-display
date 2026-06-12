@@ -8,6 +8,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   Viewer.init();
   Editor.init();
 
+  // ── OCR init ──────────────────────────────────────────────
+  OCR.init((chordproText) => {
+    // OCR result → feed into paste preview
+    document.getElementById('paste-input').value = chordproText;
+    document.querySelector('[data-method="paste"]').click();
+    showImportPreview(
+      chordproText, 'import-preview', 'preview-title', 'preview-artist',
+      'preview-format', 'preview-render', 'preview-save'
+    );
+  });
+
+  // OCR reset button
+  document.getElementById('ocr-reset').addEventListener('click', () => {
+    document.getElementById('ocr-correction-panel').style.display = 'none';
+    document.getElementById('ocr-actions').style.display = 'none';
+    document.getElementById('ocr-status-bar').style.display = 'none';
+    document.getElementById('ocr-drop').style.display = 'block';
+    document.getElementById('ocr-status').textContent = '';
+  });
+
   // ── Service worker version notifications ──────────────────
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.addEventListener('message', e => {
@@ -249,47 +269,52 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function renderPreviewContent(content, format, containerId) {
     const el = document.getElementById(containerId);
+    el.style.fontSize = '13px';
     el.innerHTML = '';
     if (format === 'chordpro') {
       const sections = Parser.parseChordPro(content, 0);
       sections.slice(0, 4).forEach(sec => {
         const wrapper = document.createElement('div');
+        wrapper.className = 'section-block';
         wrapper.style.marginBottom = '6px';
         if (sec.label) {
           const lbl = document.createElement('div');
           lbl.className = 'section-label';
-          lbl.style.fontSize = '10px';
           lbl.textContent = sec.label;
           wrapper.appendChild(lbl);
         }
-        sec.rows.slice(0, 5).forEach(row => {
-          const span = document.createElement('span');
-          span.className = row.type === 'chord' ? 'chord-line' : 'lyric-line';
-          span.style.fontSize = '12px';
-          if (row.type === 'chord') {
-            row.text.split(/( +)/).forEach(part => {
-              if (!part.trim()) { span.appendChild(document.createTextNode(part)); }
-              else {
-                const cs = document.createElement('span');
-                cs.className = 'chord-token'; cs.textContent = part;
-                span.appendChild(cs);
-              }
-            });
-          } else { span.textContent = row.text; }
-          wrapper.appendChild(span);
+        sec.lines.slice(0, 6).forEach(tokens => {
+          const lineEl = document.createElement('div');
+          lineEl.className = 'lyric-line';
+          const hasChords = tokens.some(t => t.chord);
+          if (hasChords) lineEl.classList.add('has-chords');
+          tokens.forEach(tok => {
+            if (tok.chord) {
+              const wrap = document.createElement('span');
+              wrap.className = 'chord-wrap';
+              const ch = document.createElement('span');
+              ch.className = 'chord-above';
+              ch.textContent = tok.chord;
+              wrap.appendChild(ch);
+              if (tok.text) wrap.appendChild(document.createTextNode(tok.text));
+              lineEl.appendChild(wrap);
+            } else if (tok.text) {
+              lineEl.appendChild(document.createTextNode(tok.text));
+            }
+          });
+          wrapper.appendChild(lineEl);
         });
         el.appendChild(wrapper);
       });
       if (sections.length > 4) {
         const more = document.createElement('div');
         more.style.cssText = 'color:var(--sub);font-size:11px;margin-top:4px';
-        more.textContent = `… and ${sections.length - 4} more section(s)`;
+        more.textContent = '… and ' + (sections.length - 4) + ' more section(s)';
         el.appendChild(more);
       }
     } else {
-      el.style.fontFamily  = 'var(--font-song)';
-      el.style.fontSize    = '12px';
-      el.style.whiteSpace  = 'pre-wrap';
+      el.style.fontFamily = 'var(--font-song)';
+      el.style.whiteSpace = 'pre-wrap';
       el.textContent = content.slice(0, 400) + (content.length > 400 ? '…' : '');
     }
   }
