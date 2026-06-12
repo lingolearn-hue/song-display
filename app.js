@@ -110,8 +110,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   navTabs.forEach(tab => tab.addEventListener('click', () => showScreen(tab.dataset.screen)));
   document.querySelector('.nav-cta').addEventListener('click', () => showScreen('import'));
   document.getElementById('viewer-back').addEventListener('click', () => showScreen('songs'));
-  document.getElementById('viewer-edit').addEventListener('click', () => {
-    if (currentViewerSong) openEditor(currentViewerSong);
+  // Edit song now lives in display options drawer
+  document.getElementById('drawer-edit-song').addEventListener('click', () => {
+    if (currentViewerSong) {
+      // Close drawer first
+      document.getElementById('control-drawer').classList.add('hidden');
+      openEditor(currentViewerSong);
+    }
   });
 
   // ── Song list ─────────────────────────────────────────────
@@ -126,10 +131,113 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderSongList(searchEl.value);
   }
 
+  // ── Language → flag mapping ──────────────────────────────
+  const LANG_FLAG = {
+    'en': '🇬🇧', 'de': '🇩🇪', 'fr': '🇫🇷', 'es': '🇪🇸',
+    'it': '🇮🇹', 'nl': '🇳🇱', 'pt': '🇧🇷', 'zh': '🇨🇳',
+    'zh-pinyin': '🇨🇳', 'la': '🏛️',
+  };
+  const LANG_NAME = {
+    'en': 'English', 'de': 'German', 'fr': 'French', 'es': 'Spanish',
+    'it': 'Italian', 'nl': 'Dutch', 'pt': 'Portuguese', 'zh': 'Chinese',
+    'zh-pinyin': 'Pinyin', 'la': 'Latin',
+  };
+
+  function songPrimaryLang(song) {
+    return song.texts && song.texts[0] ? (song.texts[0].language || 'en') : 'en';
+  }
+
+  // Active filters
+  let activeLangs = new Set();
+  let activeTags  = new Set();
+
+  function buildFilterRow() {
+    // Collect all languages and tags across songs
+    const langs = new Set();
+    const tags  = new Set();
+    allSongs.forEach(s => {
+      if (s.texts) s.texts.forEach(t => { if (t.language) langs.add(t.language); });
+      if (s.tags)  s.tags.forEach(t => tags.add(t));
+    });
+
+    // Language chips
+    const langEl = document.getElementById('lang-filters');
+    langEl.innerHTML = '';
+    // "All" chip
+    const allChip = makeChip('All', '', activeLangs.size === 0, () => {
+      activeLangs.clear();
+      buildFilterRow();
+      renderSongList(searchEl.value);
+    });
+    langEl.appendChild(allChip);
+
+    [...langs].sort().forEach(lang => {
+      const flag = LANG_FLAG[lang] || '🌐';
+      const name = LANG_NAME[lang] || lang;
+      const chip = makeChip(flag, name, activeLangs.has(lang), () => {
+        if (activeLangs.has(lang)) activeLangs.delete(lang);
+        else activeLangs.add(lang);
+        buildFilterRow();
+        renderSongList(searchEl.value);
+      });
+      langEl.appendChild(chip);
+    });
+
+    // Tag chips
+    const tagEl = document.getElementById('tag-filters');
+    tagEl.innerHTML = '';
+    if (tags.size === 0) {
+      tagEl.style.display = 'none';
+      document.querySelector('.filter-divider').style.display = 'none';
+    } else {
+      tagEl.style.display = 'flex';
+      document.querySelector('.filter-divider').style.display = 'block';
+      [...tags].sort().forEach(tag => {
+        const chip = makeChip(tagEmoji(tag) + ' ' + tag, '', activeTags.has(tag), () => {
+          if (activeTags.has(tag)) activeTags.delete(tag);
+          else activeTags.add(tag);
+          buildFilterRow();
+          renderSongList(searchEl.value);
+        });
+        tagEl.appendChild(chip);
+      });
+    }
+  }
+
+  function makeChip(label, title, active, onClick) {
+    const btn = document.createElement('button');
+    btn.className = 'filter-chip' + (active ? ' active' : '');
+    btn.textContent = label;
+    if (title) btn.title = title;
+    btn.addEventListener('click', onClick);
+    return btn;
+  }
+
+  function tagEmoji(tag) {
+    const map = { christmas:'🎄', folk:'🪕', hymn:'⛪', anthem:'🏛️',
+                  lullaby:'🌙', spiritual:'✝️', classical:'🎼', traditional:'🎵' };
+    return map[tag] || '🏷️';
+  }
+
+  function songMatchesFilters(song) {
+    // Language filter: song must have at least one text in an active language
+    if (activeLangs.size > 0) {
+      const songLangs = new Set((song.texts || []).map(t => t.language));
+      if (![...activeLangs].some(l => songLangs.has(l))) return false;
+    }
+    // Tag filter: song must have all active tags
+    if (activeTags.size > 0) {
+      const songTags = new Set(song.tags || []);
+      if (![...activeTags].every(t => songTags.has(t))) return false;
+    }
+    return true;
+  }
+
   function renderSongList(filter = '') {
     const q = filter.toLowerCase();
     const list = allSongs.filter(s =>
-      s.title.toLowerCase().includes(q) || (s.artist || '').toLowerCase().includes(q)
+      (s.title.toLowerCase().includes(q) || (s.artist || '').toLowerCase().includes(q))
+      && songMatchesFilters(s)
     );
     songListEl.innerHTML = '';
     if (!list.length) {
@@ -137,6 +245,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
     list.forEach(song => {
+      const primaryLang = songPrimaryLang(song);
+      const flag = LANG_FLAG[primaryLang] || '';
       const item = document.createElement('div');
       item.className = 'song-item';
       item.innerHTML = `
@@ -145,6 +255,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="song-item-artist">${esc(song.artist || '')}</div>
         </div>
         <div class="song-item-actions">
+          <span class="song-item-flag" title="${esc(LANG_NAME[primaryLang] || primaryLang)}">${flag}</span>
           <span class="song-item-key">${esc(song.key || '')}</span>
           <button class="btn-icon song-edit-btn" title="Edit song">✎</button>
         </div>
@@ -160,6 +271,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   searchEl.addEventListener('input', () => renderSongList(searchEl.value));
   await loadSongs();
+  buildFilterRow();
 
   function openSong(song, queueData, queueIdx) {
     currentViewerSong = song;
@@ -175,6 +287,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   function openEditor(song) {
     Editor.open(song, async (saved) => {
       await loadSongs();
+      buildFilterRow();
       await SetlistManager.load(allSongs);
       if (saved && currentViewerSong && currentViewerSong.id === saved.id) {
         // Refresh viewer with updated song
