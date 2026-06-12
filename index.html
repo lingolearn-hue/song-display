@@ -51,9 +51,19 @@
       <input type="text" id="song-search" placeholder="Search songs…" autocomplete="off">
     </div>
     <div id="filter-row" class="filter-row">
-      <div id="lang-filters" class="filter-chips"></div>
-      <div class="filter-divider"></div>
-      <div id="tag-filters" class="filter-chips"></div>
+      <div class="filter-dropdown-wrap">
+        <button class="filter-dropdown-btn" id="lang-dropdown-btn">
+          🌐 Language <span class="filter-count" id="lang-count"></span>▾
+        </button>
+        <div class="filter-dropdown-menu hidden" id="lang-dropdown-menu"></div>
+      </div>
+      <div class="filter-dropdown-wrap">
+        <button class="filter-dropdown-btn" id="tag-dropdown-btn">
+          🏷 Type <span class="filter-count" id="tag-count"></span>▾
+        </button>
+        <div class="filter-dropdown-menu hidden" id="tag-dropdown-menu"></div>
+      </div>
+      <button class="filter-clear-btn hidden" id="filter-clear">✕ Clear</button>
     </div>
     <div id="song-list" class="song-list-items"></div>
   </div>
