@@ -1,19 +1,20 @@
-// sw.js — song-display service worker
-// APP_VERSION must be bumped with every release that changes cached files.
-const APP_VERSION = '6.0';
+// sw.js — song-display service worker v6.1
+// APP_VERSION must be bumped with every release.
+const APP_VERSION = '6.1';
 const CACHE       = 'song-display-' + APP_VERSION;
 
+// Files to pre-cache. data.js is intentionally excluded —
+// it must always be fetched fresh so migrations see the latest SONGS array.
 const APP_SHELL = [
   './index.html',
   './style.css',
-  './data.js',
   './db.js',
   './parser.js',
   './viewer.js',
+  './voice.js',
   './fetcher.js',
   './editor.js',
   './setlist-manager.js',
-  './voice.js',
   './ocr.js',
   './app.js',
   './manifest.json',
@@ -26,16 +27,16 @@ const APP_SHELL = [
   './icon-512.png',
 ];
 
-// ── Install: pre-cache app shell ──────────────────────────
+// ── Install ───────────────────────────────────────────────
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE)
       .then(c => c.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())   // activate immediately
+      .then(() => self.skipWaiting())
   );
 });
 
-// ── Activate: delete old caches, notify clients ───────────
+// ── Activate: purge old caches, notify clients ────────────
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys()
@@ -44,34 +45,45 @@ self.addEventListener('activate', e => {
       ))
       .then(() => self.clients.claim())
       .then(() => {
-        // Tell all open tabs a new version is active
-        self.clients.matchAll({ type: 'window' }).then(clients => {
-          clients.forEach(c => c.postMessage({ type: 'NEW_VERSION', version: APP_VERSION }));
-        });
+        self.clients.matchAll({ type: 'window' }).then(clients =>
+          clients.forEach(c => c.postMessage({ type: 'NEW_VERSION', version: APP_VERSION }))
+        );
       })
   );
 });
 
-// ── Fetch: network-first for app shell, cache fallback ────
-// Network-first means users always get fresh code when online.
-// Cache serves as offline fallback only.
+// ── Fetch strategy ────────────────────────────────────────
 self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
   const url = e.request.url;
 
-  // Only handle same-origin GET requests
-  if (e.request.method !== 'GET') return;
-  if (!url.startsWith(self.location.origin) && !url.includes('fonts.googleapis.com') && !url.includes('fonts.gstatic.com')) return;
+  // data.js: always network, no cache — ensures migrations see latest SONGS
+  if (url.includes('data.js')) {
+    e.respondWith(
+      fetch(e.request).catch(() => caches.match(e.request))
+    );
+    return;
+  }
 
-  e.respondWith(
-    fetch(e.request)
-      .then(res => {
-        // Cache a fresh copy
-        if (res.ok) {
-          const clone = res.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone));
-        }
-        return res;
-      })
-      .catch(() => caches.match(e.request))  // offline fallback
-  );
+  // App shell: network-first, cache fallback (offline support)
+  const isShell = APP_SHELL.some(f => url.endsWith(f.replace('./', '')));
+  const isFont  = url.includes('fonts.googleapis.com') || url.includes('fonts.gstatic.com');
+
+  if (isShell || isFont) {
+    e.respondWith(
+      fetch(e.request)
+        .then(res => {
+          if (res.ok) {
+            const clone = res.clone();
+            caches.open(CACHE).then(c => c.put(e.request, clone));
+          }
+          return res;
+        })
+        .catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
+  // Everything else (CORS proxy, CDN): network only
+  e.respondWith(fetch(e.request).catch(() => new Response('', { status: 503 })));
 });
