@@ -94,7 +94,7 @@ const DB = (() => {
 
   // ── Data versioning & migration ───────────────────────────
   // Bump DATA_VERSION whenever sample data changes or a migration is needed.
-  const DATA_VERSION = 2;  // v3.1: replaced copyrighted songs with public domain
+  const DATA_VERSION = 4;  // v0.4.1: added German folk + Chinese songs
 
   async function migrate() {
     await open();
@@ -117,11 +117,37 @@ const DB = (() => {
       }
     }
 
-    // Seed public domain songs if library is now empty
-    const remaining = await getAllSongs();
-    if (remaining.length === 0) {
-      for (const song of SONGS)    await putSong({ ...song });
-      for (const sl   of SETLISTS) await putSetlist({ ...sl });
+    // v2→v3: reseed expanded songbook if only old 6 pd songs remain
+    if (stored < 3) {
+      const remaining = await getAllSongs();
+      const oldPdIds = new Set(['pd-001','pd-002','pd-003','pd-004','pd-005','pd-006']);
+      const isOnlyOldSeeds = remaining.length > 0 && remaining.every(s => oldPdIds.has(s.id));
+      if (remaining.length === 0 || isOnlyOldSeeds) {
+        for (const id of ['sl-demo-1','sl-demo-2']) {
+          try { await wrap(tx('setlists','readwrite').delete(id)); } catch(_) {}
+        }
+        for (const song of SONGS)    await putSong({ ...song });
+        for (const sl   of SETLISTS) await putSetlist({ ...sl });
+      }
+    }
+
+    // v3→v4: add new German and Chinese songs to existing installs
+    if (stored < 4) {
+      const newIds = ['pd-031','pd-032','pd-033','pd-034','pd-035','pd-036','pd-037','pd-038',
+                      'pd-039','pd-040','pd-041','pd-042','pd-043','pd-044','pd-045','pd-046'];
+      for (const id of newIds) {
+        const existing = await getSong(id);
+        if (!existing) {
+          const song = SONGS.find(s => s.id === id);
+          if (song) await putSong({ ...song });
+        }
+      }
+      // Add new setlists
+      const newSlIds = ['sl-demo-5','sl-demo-6'];
+      for (const id of newSlIds) {
+        const sl = SETLISTS.find(s => s.id === id);
+        if (sl) await putSetlist({ ...sl });
+      }
     }
 
     await setSetting('dataVersion', DATA_VERSION);
