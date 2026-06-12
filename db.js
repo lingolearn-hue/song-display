@@ -89,7 +89,7 @@ const DB = (() => {
   // Strategy: always sync every demo song and setlist that should exist,
   // regardless of stored version. This makes migration idempotent and
   // safe to re-run — existing user-added songs are never touched.
-  const DATA_VERSION = 6;  // v0.6: robust sync-based migration
+  const DATA_VERSION = 7;  // v0.7: tags, EN translations for DE songs
 
   async function migrate() {
     await open();
