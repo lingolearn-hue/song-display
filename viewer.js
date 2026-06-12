@@ -7,7 +7,7 @@ const Viewer = (() => {
   let activeTextIdx = 0;
   let pages         = [];
   let currentPage   = 0;
-  let fontSize      = 16;
+  let fontSize      = 12;
   let transpose     = 0;
   let capo          = 0;
   let columns       = 1;
@@ -207,6 +207,12 @@ const Viewer = (() => {
   }
 
   // ── Text tabs ─────────────────────────────────────────────
+  // Language code → flag emoji
+  const LANG_FLAG = {
+    'en':'🇬🇧','de':'🇩🇪','fr':'🇫🇷','es':'🇪🇸','it':'🇮🇹',
+    'nl':'🇳🇱','pt':'🇧🇷','zh':'🇨🇳','zh-pinyin':'🇨🇳','la':'🏛️',
+  };
+
   function buildTextTabs() {
     const tabBar = el.textTabs();
     tabBar.innerHTML = '';
@@ -215,7 +221,10 @@ const Viewer = (() => {
     song.texts.forEach((text, i) => {
       const btn = document.createElement('button');
       btn.className = 'text-tab' + (i === activeTextIdx ? ' active' : '');
-      btn.textContent = text.label || ('Text ' + (i + 1));
+      const flag = text.language ? (LANG_FLAG[text.language] || '') : '';
+      // Show flag if available, else label
+      btn.textContent = flag ? flag + ' ' + (text.label || '') : (text.label || 'Text ' + (i+1));
+      btn.title = text.label || '';
       btn.addEventListener('click', () => {
         activeTextIdx = i; buildTextTabs(); currentPage = 0; rerender();
       });
@@ -409,7 +418,31 @@ const Viewer = (() => {
       if (drawerOpen) { closeDrawer(); return; }
       if (!scrolling) prevPage();
     });
-    $('tap-menu').addEventListener('click', toggleDrawer);
+    // Display options button (replaces tap-menu and edit button)
+    const dispBtn = $('display-options-btn');
+    if (dispBtn) dispBtn.addEventListener('click', toggleDrawer);
+
+    // ── Swipe to flip pages ──────────────────────────────────
+    let swipeStartX = 0;
+    let swipeStartY = 0;
+    let swipeStartT = 0;
+    el.viewerContent().addEventListener('touchstart', e => {
+      swipeStartX = e.touches[0].clientX;
+      swipeStartY = e.touches[0].clientY;
+      swipeStartT = Date.now();
+    }, { passive: true });
+    el.viewerContent().addEventListener('touchend', e => {
+      if (scrolling) return;
+      const dx = e.changedTouches[0].clientX - swipeStartX;
+      const dy = e.changedTouches[0].clientY - swipeStartY;
+      const dt = Date.now() - swipeStartT;
+      // Must be fast enough, mostly horizontal, and > 50px
+      if (dt > 600) return;
+      if (Math.abs(dy) > Math.abs(dx)) return;
+      if (Math.abs(dx) < 50) return;
+      if (drawerOpen) { closeDrawer(); return; }
+      if (dx < 0) nextPage(); else prevPage();
+    }, { passive: true });
 
     document.addEventListener('keydown', e => {
       if (!document.body.classList.contains('viewing')) return;
@@ -463,7 +496,7 @@ const Viewer = (() => {
     el.drawer().addEventListener('touchstart', e => { ty0 = e.touches[0].clientY; }, { passive: true });
     el.drawer().addEventListener('touchend',   e => { if (e.changedTouches[0].clientY - ty0 > 60) closeDrawer(); }, { passive: true });
 
-    DB.getSetting('fontSize',  16).then(v => { fontSize = v; syncDrawer(); });
+    DB.getSetting('fontSize',  12).then(v => { fontSize = v; syncDrawer(); });
 
     // Listen for BPM-derived scroll speed from app.js
     document.addEventListener('set-scroll-speed', e => {
