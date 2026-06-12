@@ -26,6 +26,10 @@
 <title>song-display</title>
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="style.css">
+<style>
+  /* Block pinch/double-tap zoom globally */
+  html { touch-action: manipulation; }
+</style>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 <body>
@@ -46,6 +50,11 @@
     <div class="song-search-bar">
       <input type="text" id="song-search" placeholder="Search songs…" autocomplete="off">
     </div>
+    <div id="filter-row" class="filter-row">
+      <div id="lang-filters" class="filter-chips"></div>
+      <div class="filter-divider"></div>
+      <div id="tag-filters" class="filter-chips"></div>
+    </div>
     <div id="song-list" class="song-list-items"></div>
   </div>
 </div>
@@ -65,8 +74,8 @@
     <span id="page-current">1</span> / <span id="page-total">1</span>
   </div>
 
-  <button id="viewer-back"  class="viewer-back">← Songs</button>
-  <button id="viewer-edit"  class="viewer-edit">Edit</button>
+  <button id="viewer-back" class="viewer-back">← Songs</button>
+  <button id="display-options-btn" class="display-options-btn">⚙ Options</button>
 
   <div id="viewer-title-overlay" class="viewer-title-overlay">
     <span id="overlay-title"></span>
@@ -83,8 +92,6 @@
     <button class="next-song-advance btn-primary">▶ Play</button>
     <button class="next-song-dismiss btn-sm">✕</button>
   </div>
-
-  <div id="tap-menu" class="tap-menu-zone"></div>
 
   <div id="control-drawer" class="control-drawer hidden">
     <div class="drawer-handle"></div>
@@ -147,6 +154,15 @@
     <div class="drawer-row">
       <span class="drawer-label">Night mode</span>
       <div class="toggle on" id="night-toggle"></div>
+    </div>
+
+    <div class="drawer-divider"></div>
+
+    <div class="drawer-row">
+      <span class="drawer-label">Song</span>
+      <div class="drawer-control">
+        <button class="ctrl-btn" id="drawer-edit-song">✎ Edit song</button>
+      </div>
     </div>
   </div>
 </div>
@@ -439,6 +455,15 @@
 <script src="fetcher.js"></script>
 <script src="editor.js"></script>
 <script src="setlist-manager.js"></script>
+<script>
+  // Block double-tap zoom on iOS
+  let lastTap = 0;
+  document.addEventListener('touchend', e => {
+    const now = Date.now();
+    if (now - lastTap < 300) e.preventDefault();
+    lastTap = now;
+  }, { passive: false });
+</script>
 <script src="voice.js"></script>
 <script src="ocr.js"></script>
 <script src="app.js"></script>
