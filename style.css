@@ -205,9 +205,7 @@ body.viewing #screen-viewer { display: flex; }
   column-gap: 40px;
 }
 
-/* Chord and lyric rendering */
-.song-block { break-inside: avoid; margin-bottom: 8px; }
-
+/* ── Chord and lyric rendering (ruby-style) ── */
 .section-label {
   font-family: var(--font-ui);
   font-size: 10px;
@@ -215,40 +213,50 @@ body.viewing #screen-viewer { display: flex; }
   letter-spacing: 1.2px;
   text-transform: uppercase;
   color: var(--accent);
-  margin-bottom: 4px;
-  margin-top: 16px;
+  margin-bottom: 2px;
+  margin-top: 14px;
   break-after: avoid;
+  display: block;
 }
 .section-label:first-child { margin-top: 0; }
 
-.chord-line {
-  display: block;
-  white-space: pre;
-  line-height: 1.4;
-}
+/* A lyric line */
 .lyric-line {
   display: block;
   white-space: pre-wrap;
-  line-height: 1.7;
+  word-break: break-word;
+  /* Normal line height when no chords present */
+  line-height: 1.75;
 }
 
-.chord-token {
-  display: inline-block;
+/* When a line has chords, add top padding to make room for them */
+.lyric-line.has-chords {
+  padding-top: 1.4em;   /* space for chord above */
+  line-height: 1.6;
+}
+
+/* Inline wrapper: chord floats above its anchor text */
+.chord-wrap {
+  display: inline;
+  position: relative;
+  white-space: pre;
+}
+
+/* The chord itself — positioned above the text */
+.chord-above {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 1px;
   color: var(--chord);
   font-weight: 600;
-  font-size: 0.82em;
+  font-size: 0.80em;
   background: var(--chord-bg);
   padding: 0 3px;
   border-radius: 3px;
-  margin-right: 1px;
-  position: relative;
-  top: -1px;
-}
-
-/* Inline chordpro style: [Chord]lyric */
-.chord-inline-wrap {
-  display: inline;
-  position: relative;
+  white-space: nowrap;
+  line-height: 1.5;
+  pointer-events: none;
 }
 
 /* Page indicator */
@@ -1214,3 +1222,103 @@ body.editor-open .editor-backdrop {
   cursor: pointer;
 }
 .update-banner button:hover { background: rgba(0,0,0,.25); }
+
+/* ══════════════════════════════════════════════
+   v0.4 additions
+══════════════════════════════════════════════ */
+
+/* ── OCR correction UI ── */
+.ocr-correction-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+@media (max-width: 600px) {
+  .ocr-correction-panel { grid-template-columns: 1fr; }
+}
+
+.ocr-image-pane,
+.ocr-text-pane {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
+  overflow: hidden;
+}
+
+.ocr-pane-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--sub);
+  margin-bottom: 8px;
+}
+
+.ocr-image-preview {
+  width: 100%;
+  border-radius: 5px;
+  display: block;
+  max-height: 300px;
+  object-fit: contain;
+  background: var(--border);
+}
+
+.ocr-line-list {
+  max-height: 300px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ocr-line-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ocr-badge {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  background: var(--border);
+  color: var(--sub);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background .15s, color .15s;
+}
+.ocr-chord-row .ocr-badge {
+  background: var(--chord-bg);
+  color: var(--chord);
+}
+
+.ocr-line-input {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--text);
+  font-family: var(--font-song);
+  font-size: 12px;
+  padding: 3px 7px;
+  outline: none;
+  user-select: text;
+}
+.ocr-chord-row .ocr-line-input { color: var(--chord); }
+.ocr-line-input:focus { border-color: var(--chord); }
+
+.ocr-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  align-items: center;
+}
