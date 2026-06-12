@@ -10,6 +10,7 @@ const SONGS = [
     title: 'Scarborough Fair',
     artist: 'Traditional English',
     key: 'Am', capo: 0, bpm: 76,
+    tags: ['folk'],
     texts: [{
       id: 'pd-001-t1', label: 'Original', format: 'chordpro', language: 'en',
       content: `{start_of_verse: Verse 1}
@@ -40,6 +41,7 @@ Be[C]tween the salt water [Em]and the sea [Am]strand
     title: 'Amazing Grace',
     artist: 'John Newton (1772)',
     key: 'G', capo: 0, bpm: 68,
+    tags: ['hymn'],
     texts: [{
       id: 'pd-002-t1', label: 'Original', format: 'chordpro', language: 'en',
       content: `{start_of_verse: Verse 1}
@@ -77,6 +79,7 @@ Than [G]when we'd [D]first be[G]gun
     title: 'Greensleeves',
     artist: 'Traditional English (16th century)',
     key: 'Am', capo: 0, bpm: 80,
+    tags: ['folk'],
     texts: [{
       id: 'pd-003-t1', label: 'Original', format: 'chordpro', language: 'en',
       content: `{start_of_verse: Verse 1}
@@ -114,6 +117,7 @@ And [G]who but my Lady [Am]Greensleeves
     title: 'Danny Boy',
     artist: 'Traditional Irish (Londonderry Air)',
     key: 'G', capo: 0, bpm: 60,
+    tags: ['folk'],
     texts: [{
       id: 'pd-004-t1', label: 'Original', format: 'chordpro', language: 'en',
       content: `{start_of_verse: Verse 1}
@@ -137,6 +141,7 @@ Oh Danny [G]Boy, oh Danny [D]Boy, I love you [G]so
     title: 'House of the Rising Sun',
     artist: 'Traditional American Folk',
     key: 'Am', capo: 0, bpm: 78,
+    tags: ['folk'],
     texts: [{
       id: 'pd-005-t1', label: 'Original', format: 'chordpro', language: 'en',
       content: `{start_of_verse: Verse 1}
@@ -174,6 +179,7 @@ In the [Am]House of the [E]Rising [Am]Sun
     title: 'Wayfaring Stranger',
     artist: 'Traditional American Spiritual',
     key: 'Dm', capo: 0, bpm: 72,
+    tags: ['spiritual'],
     texts: [{
       id: 'pd-006-t1', label: 'Original', format: 'chordpro', language: 'en',
       content: `{start_of_verse: Verse 1}
@@ -211,6 +217,7 @@ I'm just going [A]over [Dm]home
     title: 'Oh! Susanna',
     artist: 'Stephen Foster (1848)',
     key: 'G', capo: 0, bpm: 110,
+    tags: ['folk'],
     texts: [{
       id: 'pd-007-t1', label: 'Original', format: 'chordpro', language: 'en',
       content: `{start_of_verse: Verse 1}
@@ -244,6 +251,7 @@ For I [G]come from Alabama with my [D7]banjo on my [G]knee
     title: 'When the Saints Go Marching In',
     artist: 'Traditional Gospel',
     key: 'G', capo: 0, bpm: 120,
+    tags: ['spiritual'],
     texts: [{
       id: 'pd-008-t1', label: 'Original', format: 'chordpro', language: 'en',
       content: `{start_of_verse: Verse 1}
@@ -281,6 +289,7 @@ When the [G]saints go [D7]marching [G]in
     title: 'Swing Low, Sweet Chariot',
     artist: 'Traditional Spiritual',
     key: 'D', capo: 0, bpm: 72,
+    tags: ['spiritual'],
     texts: [{
       id: 'pd-009-t1', label: 'Original', format: 'chordpro', language: 'en',
       content: `{start_of_chorus: Chorus}
@@ -318,6 +327,7 @@ Tell all my [D]friends I'm [G]coming too
     title: 'Clementine',
     artist: 'Percy Montrose (1884)',
     key: 'G', capo: 0, bpm: 100,
+    tags: ['folk'],
     texts: [{
       id: 'pd-010-t1', label: 'Original', format: 'chordpro', language: 'en',
       content: `{start_of_verse: Verse 1}
@@ -355,6 +365,7 @@ Dreadful [D7]sorry, Clemen[G]tine
     title: 'Auld Lang Syne',
     artist: 'Robert Burns (1788)',
     key: 'G', capo: 0, bpm: 88,
+    tags: ['folk'],
     texts: [{
       id: 'pd-011-t1', label: 'Original', format: 'chordpro', language: 'en',
       content: `{start_of_verse: Verse 1}
@@ -394,6 +405,7 @@ For [G]auld [D7]lang [G]syne
     title: 'Stille Nacht',
     artist: 'Franz Xaver Gruber (1818)',
     key: 'C', capo: 0, bpm: 60,
+    tags: ['christmas'],
     texts: [
       {
         id: 'pd-012-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
@@ -443,6 +455,7 @@ Heavenly [F]hosts sing alleluia
     title: 'Lili Marleen',
     artist: 'Norbert Schultze (1938)',
     key: 'C', capo: 0, bpm: 84,
+    tags: ['folk'],
     texts: [
       {
         id: 'pd-013-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
@@ -492,6 +505,7 @@ My own [G7]Lili Mar[C]leen
     title: 'Edelweiß',
     artist: 'Traditional Austrian Folk',
     key: 'C', capo: 0, bpm: 72,
+    tags: ['folk'],
     texts: [{
       id: 'pd-014-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
       content: `{start_of_verse: Strophe 1}
@@ -507,7 +521,24 @@ My own [G7]Lili Mar[C]leen
 [C]Blüh für [Am]immer, blüh für [F]lang
 [C]Heimatland, [G7]Heimat[C]land
 {end_of_verse}`
-    }]
+    },
+      {
+        id: 'pd-014-t2', label: 'English', format: 'chordpro', language: 'en',
+        content: `{start_of_verse: Verse 1}
+[C]Edelweiss, [G7]Edelweiss
+[C]Every morning you greet [F]me
+[C]Small and white, [Am]clean and bright
+[F]You look happy to [C]meet me
+{end_of_verse}
+
+{start_of_verse: Verse 2}
+[C]Blossom of [G7]snow may you [C]bloom and [G7]grow
+[C]Bloom and grow for[F]ever
+[C]Edelweiss, [Am]Edelweiss
+[F]Bless my home[C]land for[G7]ever
+{end_of_verse}`
+      }
+    ]
   },
 
   // ── French ───────────────────────────────────────────────
@@ -517,6 +548,7 @@ My own [G7]Lili Mar[C]leen
     title: 'Au Clair de la Lune',
     artist: 'Traditional French (18th century)',
     key: 'G', capo: 0, bpm: 90,
+    tags: ['folk'],
     texts: [
       {
         id: 'pd-015-t1', label: 'Français', format: 'chordpro', language: 'fr',
@@ -563,6 +595,7 @@ For the love of [D7]God
     title: 'Frère Jacques',
     artist: 'Traditional French',
     key: 'G', capo: 0, bpm: 100,
+    tags: ['folk'],
     texts: [
       {
         id: 'pd-016-t1', label: 'Français', format: 'chordpro', language: 'fr',
@@ -596,6 +629,7 @@ For the love of [D7]God
     title: 'La Bamba',
     artist: 'Traditional Mexican Folk',
     key: 'C', capo: 0, bpm: 130,
+    tags: ['folk'],
     texts: [{
       id: 'pd-017-t1', label: 'Español', format: 'chordpro', language: 'es',
       content: `{start_of_verse: Verso 1}
@@ -623,6 +657,7 @@ Soy capi[C]tán, soy capi[F]tán
     title: 'Cielito Lindo',
     artist: 'Quirino Mendoza y Cortés (1882)',
     key: 'G', capo: 0, bpm: 116,
+    tags: ['folk'],
     texts: [{
       id: 'pd-018-t1', label: 'Español', format: 'chordpro', language: 'es',
       content: `{start_of_verse: Verso 1}
@@ -662,6 +697,7 @@ Cielito [G]lindo los corazones
     title: 'O Sole Mio',
     artist: 'Eduardo di Capua (1898)',
     key: 'G', capo: 0, bpm: 76,
+    tags: ['folk'],
     texts: [
       {
         id: 'pd-019-t1', label: 'Italiano', format: 'chordpro', language: 'it',
@@ -713,6 +749,7 @@ Shines from the face of [D7]thee
     title: 'Asa Branca',
     artist: 'Luiz Gonzaga / Humberto Teixeira (1947)',
     key: 'G', capo: 0, bpm: 96,
+    tags: ['folk'],
     texts: [{
       id: 'pd-020-t1', label: 'Português', format: 'chordpro', language: 'pt',
       content: `{start_of_verse: Verso 1}
@@ -746,6 +783,7 @@ O meu co[G]ração
     title: 'Het Wilhelmus',
     artist: 'Philips van Marnix (c. 1572)',
     key: 'C', capo: 0, bpm: 72,
+    tags: ['anthem'],
     texts: [
       {
         id: 'pd-021-t1', label: 'Nederlands', format: 'chordpro', language: 'nl',
@@ -794,6 +832,7 @@ Have I always hon[F]oured
     title: 'La Marseillaise',
     artist: 'Claude Joseph Rouget de Lisle (1792)',
     key: 'G', capo: 0, bpm: 88,
+    tags: ['anthem'],
     texts: [
       {
         id: 'pd-022-t1', label: 'Français', format: 'chordpro', language: 'fr',
@@ -845,6 +884,7 @@ Water our [G]furrows
     title: 'God Save the King',
     artist: 'Traditional British (c. 1745)',
     key: 'G', capo: 0, bpm: 72,
+    tags: ['anthem'],
     texts: [{
       id: 'pd-023-t1', label: 'Original', format: 'chordpro', language: 'en',
       content: `{start_of_verse: Verse 1}
@@ -874,6 +914,7 @@ On Thee our [G]hopes we [D7]fix
     title: 'Das Deutschlandlied',
     artist: 'August Heinrich Hoffmann (1841)',
     key: 'C', capo: 0, bpm: 76,
+    tags: ['anthem'],
     texts: [
       {
         id: 'pd-024-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
@@ -909,6 +950,7 @@ Flourish, German [G7]father[C]land
     title: 'The Star-Spangled Banner',
     artist: 'Francis Scott Key (1814)',
     key: 'Bb', capo: 0, bpm: 60,
+    tags: ['anthem'],
     texts: [{
       id: 'pd-025-t1', label: 'Original', format: 'chordpro', language: 'en',
       content: `{start_of_verse: Verse 1}
@@ -939,6 +981,7 @@ And the [F]home of the [Bb]brave
     title: 'Advance Australia Fair',
     artist: 'Peter Dodds McCormick (1878)',
     key: 'G', capo: 0, bpm: 76,
+    tags: ['anthem'],
     texts: [{
       id: 'pd-026-t1', label: 'Original', format: 'chordpro', language: 'en',
       content: `{start_of_verse: Verse 1}
@@ -964,6 +1007,7 @@ Advance Aus[D7]tralia [G]fair
     title: 'Ô Canada',
     artist: 'Calixa Lavallée (1880)',
     key: 'G', capo: 0, bpm: 76,
+    tags: ['anthem'],
     texts: [
       {
         id: 'pd-027-t1', label: 'English', format: 'chordpro', language: 'en',
@@ -1001,6 +1045,7 @@ Pro[G]tégera nos [D7]foyers et nos [G]droits
     title: 'Het Wilhelmus (NL Anthem)',
     artist: 'Traditional Dutch (1572)',
     key: 'G', capo: 0, bpm: 72,
+    tags: ['anthem'],
     texts: [{
       id: 'pd-028-t1', label: 'Nederlands', format: 'chordpro', language: 'nl',
       content: `{start_of_verse: Couplet 1}
@@ -1023,6 +1068,7 @@ Heb ik altijd ge[D7]eerd
     title: 'The Wild Rover',
     artist: 'Traditional Irish',
     key: 'G', capo: 0, bpm: 108,
+    tags: ['folk'],
     texts: [{
       id: 'pd-029-t1', label: 'Original', format: 'chordpro', language: 'en',
       content: `{start_of_verse: Verse 1}
@@ -1060,6 +1106,7 @@ No [D7]never no [G]more
     title: "Molly Malone (Cockles & Mussels)",
     artist: 'Traditional Irish',
     key: 'G', capo: 0, bpm: 92,
+    tags: ['folk'],
     texts: [{
       id: 'pd-030-t1', label: 'Original', format: 'chordpro', language: 'en',
       content: `{start_of_verse: Verse 1}
@@ -1095,6 +1142,7 @@ Crying [C]cockles and mussels a[D7]live alive [G]oh
     title: 'Lorelei',
     artist: 'Friedrich Silcher (1837) / Heinrich Heine',
     key: 'G', capo: 0, bpm: 76,
+    tags: ['folk'],
     texts: [
       {
         id: 'pd-031-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
@@ -1141,6 +1189,7 @@ In the [D7]fading evening shine
     title: 'Müde bin ich, geh zur Ruh',
     artist: 'Traditional German lullaby',
     key: 'C', capo: 0, bpm: 60,
+    tags: ['lullaby'],
     texts: [{
       id: 'pd-032-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
       content: `{start_of_verse: Strophe 1}
@@ -1163,7 +1212,24 @@ Gott, lass ruhn in dei[C]ner [F]Hand
 [C]Alle Menschen groß und [G7]klein
 Sollen dir befoh[C]len sein
 {end_of_verse}`
-    }]
+    },
+      {
+        id: 'pd-032-t2', label: 'English', format: 'chordpro', language: 'en',
+        content: `{start_of_verse: Verse 1}
+[C]Tired I am, I go to [G7]rest
+And close my [C]weary [F]eyes
+[C]Father let your [G7]watching eyes
+Guard my [C]bed until I rise
+{end_of_verse}
+
+{start_of_verse: Verse 2}
+[C]If I've erred today in [G7]any way
+Dear God please [C]look not [F]on it
+[C]May your grace and [G7]Jesus' blood
+Make right what[C]ever I have done
+{end_of_verse}`
+      }
+    ]
   },
 
   {
@@ -1171,6 +1237,7 @@ Sollen dir befoh[C]len sein
     title: 'Heidenröslein',
     artist: 'Franz Schubert (1815) / Goethe',
     key: 'G', capo: 0, bpm: 88,
+    tags: ['folk', 'classical'],
     texts: [{
       id: 'pd-033-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
       content: `{start_of_verse: Strophe 1}
@@ -1200,6 +1267,7 @@ Und ich [C]will's nicht [G]leiden
     title: 'Der Lindenbaum',
     artist: 'Franz Schubert (1823) / Wilhelm Müller',
     key: 'E', capo: 0, bpm: 80,
+    tags: ['folk', 'classical'],
     texts: [{
       id: 'pd-034-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
       content: `{start_of_verse: Strophe 1}
@@ -1231,6 +1299,7 @@ Hier findst du deine [E]Ruh
     title: 'Kein schöner Land',
     artist: 'Anton Wilhelm von Zuccalmaglio (c. 1840)',
     key: 'G', capo: 0, bpm: 72,
+    tags: ['folk'],
     texts: [{
       id: 'pd-035-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
       content: `{start_of_verse: Strophe 1}
@@ -1253,7 +1322,24 @@ Noch treffen so viel [D7]hundert[G]mal
 Gott mag es schenken [C]Gott mag es lenken
 Er hat uns [G]allen so [D7]gnädig be[G]dacht
 {end_of_verse}`
-    }]
+    },
+      {
+        id: 'pd-035-t2', label: 'English', format: 'chordpro', language: 'en',
+        content: `{start_of_verse: Verse 1}
+[G]No lovelier land than [C]this a[G]ny time
+As far and wide as [D7]ours does [G]shine
+Where we find ourselves so [C]well together
+Under linden[G]trees [D7]in the evening [G]hour
+{end_of_verse}
+
+{start_of_verse: Verse 2}
+[G]There we have sat so [C]many an [G]hour
+Together in a [D7]joyful [G]band
+And sang the songs together
+That rang out [G]far and [D7]wide across the [G]land
+{end_of_verse}`
+      }
+    ]
   },
 
   {
@@ -1261,6 +1347,7 @@ Er hat uns [G]allen so [D7]gnädig be[G]dacht
     title: 'Muss i denn',
     artist: 'Friedrich Silcher (1827)',
     key: 'G', capo: 0, bpm: 100,
+    tags: ['folk'],
     texts: [{
       id: 'pd-036-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
       content: `{start_of_verse: Vers 1}
@@ -1282,7 +1369,19 @@ Sind au drauß, sind au [G]drauß
 Der Mädele [G]viel
 Lieber Schatz, i [D7]bleib dir treu
 {end_of_verse}`
-    }]
+    },
+      {
+        id: 'pd-036-t2', label: 'English', format: 'chordpro', language: 'en',
+        content: `{start_of_verse: Verse 1}
+[G]Must I then, must I [D7]then
+Leave this little [G]town behind
+And you my [G]love stay [D7]here
+When I come, when I [G]come
+When I come [G]back again
+I will call on [D7]you my love my [G]dear
+{end_of_verse}`
+      }
+    ]
   },
 
   {
@@ -1290,6 +1389,7 @@ Lieber Schatz, i [D7]bleib dir treu
     title: 'Im Frühtau zu Berge',
     artist: 'Traditional German / Swedish origin',
     key: 'D', capo: 0, bpm: 108,
+    tags: ['folk'],
     texts: [{
       id: 'pd-037-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
       content: `{start_of_verse: Strophe 1}
@@ -1305,7 +1405,24 @@ Ihr [G]Schläfer, heraus, die Sonne scheint [A7]rot
 [D]Im Frühtau zu Berge wir [A7]zieh'n, fallera
 [D]Im Frühtau zu Berge wir [A7]zieh'n falle[D]ra
 {end_of_chorus}`
-    }]
+    },
+      {
+        id: 'pd-037-t2', label: 'English', format: 'chordpro', language: 'en',
+        content: `{start_of_verse: Verse 1}
+[D]In the morning dew we [A7]climb the hill, fallera
+We [D]wander without worry and [G]care, falle[D]ra
+That's [A7]why we early [D]risers are so glad, fallera
+Because [D]up above the sun shines [A7]golden [D]bright
+{end_of_verse}
+
+{start_of_chorus: Chorus}
+You [G]sleepers arise, the sun shines [D]red
+You [G]sleepers arise, the sun shines [A7]red
+[D]In the morning dew we [A7]climb the hill, fallera
+[D]In the morning dew we [A7]climb the hill falle[D]ra
+{end_of_chorus}`
+      }
+    ]
   },
 
   {
@@ -1313,6 +1430,7 @@ Ihr [G]Schläfer, heraus, die Sonne scheint [A7]rot
     title: 'Hänschen klein',
     artist: 'Franz Wiedemann (1857)',
     key: 'C', capo: 0, bpm: 112,
+    tags: ['folk', 'lullaby'],
     texts: [{
       id: 'pd-038-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
       content: `{start_of_verse: Strophe 1}
@@ -1342,7 +1460,24 @@ Mit dem Stock
 Durch den Wald
 Kommt er heim schon [C]bald
 {end_of_verse}`
-    }]
+    },
+      {
+        id: 'pd-038-t2', label: 'English', format: 'chordpro', language: 'en',
+        content: `{start_of_verse: Verse 1}
+[C]Little Hans went
+Out alone
+Into the wide [G7]world unknown
+Staff in hand
+Hat looks grand
+Off he goes con[C]tent
+But his [F]mother weeps a lot
+Now she has no [C]Hansel
+[G7]Wish you luck
+On the track
+Come back [C]soon my lad
+{end_of_verse}`
+      }
+    ]
   },
 
   // ── Chinese folk & traditional ───────────────────────────
@@ -1354,6 +1489,7 @@ Kommt er heim schon [C]bald
     title: '茉莉花 (Mòlìhuā)',
     artist: 'Traditional Chinese folk (Jiangsu)',
     key: 'G', capo: 0, bpm: 80,
+    tags: ['folk'],
     texts: [
       {
         id: 'pd-039-t1', label: '汉字', format: 'chordpro', language: 'zh',
@@ -1399,6 +1535,7 @@ Kommt er heim schon [C]bald
     title: '月亮代表我的心 (Yuèliang Dàibiǎo Wǒ de Xīn)',
     artist: 'Sun Yi (1973) — melody traditional',
     key: 'C', capo: 0, bpm: 72,
+    tags: ['folk'],
     texts: [
       {
         id: 'pd-040-t1', label: '汉字', format: 'chordpro', language: 'zh',
@@ -1463,6 +1600,7 @@ Makes me think of you [G7]still today
     title: '康定情歌 (Kāngdìng Qínggē)',
     artist: 'Traditional Sichuan folk',
     key: 'G', capo: 0, bpm: 84,
+    tags: ['folk'],
     texts: [
       {
         id: 'pd-041-t1', label: '汉字', format: 'chordpro', language: 'zh',
@@ -1514,6 +1652,7 @@ Over the city of Kangding
     title: '在那遥远的地方 (Zài Nà Yáoyuǎn de Dìfāng)',
     artist: 'Wang Luobin (1939) — traditional Qinghai folk melody',
     key: 'D', capo: 0, bpm: 80,
+    tags: ['folk'],
     texts: [
       {
         id: 'pd-042-t1', label: '汉字', format: 'chordpro', language: 'zh',
@@ -1578,6 +1717,7 @@ Are like the bright moon on a [D]clear night
     title: '龙的传人 (Lóng de Chuán rén)',
     artist: 'Hou Dejian (1978)',
     key: 'Am', capo: 0, bpm: 76,
+    tags: ['folk'],
     texts: [
       {
         id: 'pd-043-t1', label: '汉字', format: 'chordpro', language: 'zh',
@@ -1629,6 +1769,7 @@ Forever and always [E]a child of the dragon
     title: '小河淌水 (Xiǎo Hé Tǎng Shuǐ)',
     artist: 'Traditional Yunnan folk',
     key: 'G', capo: 0, bpm: 60,
+    tags: ['folk'],
     texts: [
       {
         id: 'pd-044-t1', label: '汉字', format: 'chordpro', language: 'zh',
@@ -1684,6 +1825,7 @@ My love moves like the moon across the sky
     title: '红河谷 (Hóng Hé Gǔ)',
     artist: 'Traditional (Canadian/Chinese version)',
     key: 'G', capo: 0, bpm: 84,
+    tags: ['folk'],
     texts: [
       {
         id: 'pd-045-t1', label: '汉字', format: 'chordpro', language: 'zh',
@@ -1734,6 +1876,7 @@ And the [C]one who has loved you so [G]true
     title: '彩云追月 (Cǎiyún Zhuī Yuè)',
     artist: 'Ren Guang (1935)',
     key: 'Dm', capo: 0, bpm: 72,
+    tags: ['classical', 'folk'],
     texts: [
       {
         id: 'pd-046-t1', label: '汉字', format: 'chordpro', language: 'zh',
@@ -1788,6 +1931,7 @@ And the [C]one who has loved you so [G]true
     title: 'O Tannenbaum',
     artist: 'Ernst Anschütz (1824)',
     key: 'F', capo: 0, bpm: 76,
+    tags: ['christmas'],
     texts: [
       {
         id: 'pd-047-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
@@ -1834,6 +1978,7 @@ How [C7]lovely are thy [F]branches
     title: 'O du fröhliche',
     artist: 'Johannes Daniel Falk (1816)',
     key: 'G', capo: 0, bpm: 72,
+    tags: ['christmas'],
     texts: [
       {
         id: 'pd-048-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
@@ -1872,6 +2017,7 @@ How [C7]lovely are thy [F]branches
     title: 'Vom Himmel hoch da komm ich her',
     artist: 'Martin Luther (1535)',
     key: 'C', capo: 0, bpm: 76,
+    tags: ['christmas'],
     texts: [
       {
         id: 'pd-049-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
@@ -1920,6 +2066,7 @@ Shall be the joy of [G7]all the earth
     title: 'Ihr Kinderlein kommet',
     artist: 'Christoph von Schmid (1798)',
     key: 'G', capo: 0, bpm: 80,
+    tags: ['christmas'],
     texts: [{
       id: 'pd-050-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
       content: `{start_of_verse: Strophe 1}
@@ -1935,7 +2082,24 @@ Ein himmlisches Kind viel [G]schöner als Lanz
 Es liegt auch im Dunkeln und [C]Kälte so lind
 Wie [G]schlummert so süße das [D7]himmlische [G]Kind
 {end_of_verse}`
-    }]
+    },
+      {
+        id: 'pd-050-t2', label: 'English', format: 'chordpro', language: 'en',
+        content: `{start_of_verse: Verse 1}
+[G]O come little children, O [D7]come one and all
+To Bethlehem's manger in [G]yon humble stall
+And see what our Father whose [C]love is so great
+Has [G]sent us from heaven this [D7]glorious [G]night
+{end_of_verse}
+
+{start_of_verse: Verse 2}
+[G]See Mary and Joseph with [D7]love-beaming eyes
+Are gazing upon the re[G]deemer who lies
+The infant so lovely whose [C]face shines so bright
+As [G]sunbeams and stars do at [D7]noon and at [G]night
+{end_of_verse}`
+      }
+    ]
   },
 
   {
@@ -1943,6 +2107,7 @@ Wie [G]schlummert so süße das [D7]himmlische [G]Kind
     title: 'Es ist ein Ros entsprungen',
     artist: 'Traditional German (c. 1600)',
     key: 'G', capo: 0, bpm: 68,
+    tags: ['christmas'],
     texts: [
       {
         id: 'pd-051-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
@@ -1986,6 +2151,7 @@ When half-spent was the [D7]night
     title: 'Leise rieselt der Schnee',
     artist: 'Eduard Ebel (1895)',
     key: 'C', capo: 0, bpm: 72,
+    tags: ['christmas'],
     texts: [{
       id: 'pd-052-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
       content: `{start_of_verse: Strophe 1}
@@ -2008,7 +2174,24 @@ Chor der Engel er[C]wacht
 [F]Hört nur wie lieblich es [C]schallt
 [G7]Frieden den Menschen ge[C]hallt
 {end_of_verse}`
-    }]
+    },
+      {
+        id: 'pd-052-t2', label: 'English', format: 'chordpro', language: 'en',
+        content: `{start_of_verse: Verse 1}
+[C]Softly falls the [G7]snow
+Still the frozen [C]lake below
+[F]Christmas shimmers in the [C]wood
+[G7]Christ child's coming, that is [C]good
+{end_of_verse}
+
+{start_of_verse: Verse 2}
+[C]In the treetops of the [G7]fir
+Sings a blackbird its re[C]frain
+[F]Christmas echoes far and [C]near
+[G7]Join together and give [C]cheer
+{end_of_verse}`
+      }
+    ]
   },
 
   {
@@ -2016,6 +2199,7 @@ Chor der Engel er[C]wacht
     title: 'Kling Glöckchen klingelingeling',
     artist: 'Karl Enslin (1854)',
     key: 'C', capo: 0, bpm: 112,
+    tags: ['christmas'],
     texts: [{
       id: 'pd-053-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
       content: `{start_of_chorus: Refrain}
@@ -2037,7 +2221,30 @@ Gute Dinge wunder[C]bar
 [G7]Kindlein betet betet fein
 Schlafet süß im [C]Mondenschein
 {end_of_verse}`
-    }]
+    },
+      {
+        id: 'pd-053-t2', label: 'English', format: 'chordpro', language: 'en',
+        content: `{start_of_chorus: Chorus}
+[C]Ring little bells, ring-a-ling-ling
+[C]Ring little bells ring
+[F]Let me in dear [C]children
+Winter's cold is [G7]chilling
+Open up your [C]door to me
+Don't leave me out [G7]freezing
+[C]Ring little bells, ring-a-ling-ling
+[C]Ring little bells ring
+{end_of_chorus}
+
+{start_of_verse: Verse 1}
+[C]Girls and boys hear and [G7]look
+[C]What comes down from heaven[G7] above
+[C]Christ will bring you ev'[F]ry year
+Wonderful things and [C]good cheer
+[G7]Children pray and pray devout
+Sleep in moonlight [C]dreaming
+{end_of_verse}`
+      }
+    ]
   },
 
   {
@@ -2045,6 +2252,7 @@ Schlafet süß im [C]Mondenschein
     title: 'Morgen kommt der Weihnachtsmann',
     artist: 'Hoffmann von Fallersleben (1835)',
     key: 'G', capo: 0, bpm: 100,
+    tags: ['christmas'],
     texts: [{
       id: 'pd-054-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
       content: `{start_of_verse: Strophe 1}
@@ -2063,7 +2271,27 @@ Alles wird er [G]bringen
 Doch nur für die [D7]Kinder
 Die auch folgsam [G]sind
 {end_of_verse}`
-    }]
+    },
+      {
+        id: 'pd-054-t2', label: 'English', format: 'chordpro', language: 'en',
+        content: `{start_of_verse: Verse 1}
+[G]Tomorrow comes old [D7]Santa Claus
+Bringing all his [G]presents
+Coloured sweets and [C]sugar cake
+Apples, nuts and [G]marzipan
+For the children [D7]who love him
+{end_of_verse}
+
+{start_of_verse: Verse 2}
+[G]Drum and fife and [D7]little gun
+Flags and sabers [G]gleaming
+Hobby horse and [C]little fort
+Everything he [G]will be bringing
+But only for the [D7]children
+Who obey their [G]parents
+{end_of_verse}`
+      }
+    ]
   },
 
   {
@@ -2071,6 +2299,7 @@ Die auch folgsam [G]sind
     title: 'In dulci jubilo',
     artist: 'Heinrich Suso / Traditional (14th century)',
     key: 'G', capo: 0, bpm: 88,
+    tags: ['christmas'],
     texts: [
       {
         id: 'pd-055-t1', label: 'Latein/Deutsch', format: 'chordpro', language: 'de',
@@ -2117,6 +2346,7 @@ Matris in [G]gremio
     title: 'Süßer die Glocken nie klingen',
     artist: 'Friedrich Wilhelm Kritzinger (1828)',
     key: 'G', capo: 0, bpm: 76,
+    tags: ['christmas'],
     texts: [{
       id: 'pd-056-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
       content: `{start_of_verse: Strophe 1}
@@ -2136,7 +2366,19 @@ Zur heiligen Weih[G]nacht
 [C]Tönet ihr Glocken vom [G]hohen Turm
 [D7]Tönet durch Frieden und [G]Sturm
 {end_of_verse}`
-    }]
+    },
+      {
+        id: 'pd-056-t2', label: 'English', format: 'chordpro', language: 'en',
+        content: `{start_of_verse: Verse 1}
+[G]Sweeter the bells never [D7]ringing
+Than at Christ[G]mas time
+[G]When through the breezes their [D7]bringing
+Peace and heav'nly [G]chime
+[C]Ring out ye bells from the [G]tower so tall
+[D7]Ring through the peace and the [G]storm
+{end_of_verse}`
+      }
+    ]
   },
 
   {
@@ -2144,6 +2386,7 @@ Zur heiligen Weih[G]nacht
     title: 'Fröhliche Weihnacht überall',
     artist: 'Hermann Kletke (1841)',
     key: 'C', capo: 0, bpm: 96,
+    tags: ['christmas'],
     texts: [{
       id: 'pd-057-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
       content: `{start_of_verse: Strophe 1}
@@ -2159,7 +2402,24 @@ Tönet durch die [G7]Lüfte froher [C]Schall
 [F]Brennt im Herzen fromm und [C]hell
 Eurer Liebe [G7]Quell und [C]Well
 {end_of_verse}`
-    }]
+    },
+      {
+        id: 'pd-057-t2', label: 'English', format: 'chordpro', language: 'en',
+        content: `{start_of_verse: Verse 1}
+[C]Merry Christmas ev'ry[G7]where
+Ringing through the [C]air with [F]cheer
+[C]Christmas bells, Christmas [G7]tree
+Christmas scent for [C]all to see
+{end_of_verse}
+
+{start_of_verse: Verse 2}
+[C]Merry Christmas ev'rywhere
+Ringing through the [G7]winter [C]air
+[F]Burning in each heart so [C]bright
+Love's eternal [G7]source of [C]light
+{end_of_verse}`
+      }
+    ]
   },
 
 ];
