@@ -19,6 +19,40 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
   });
 
+  // ── BPM tap tempo ─────────────────────────────────────────
+  let tapTimes = [];
+  document.getElementById('tap-tempo-btn').addEventListener('click', () => {
+    const now = Date.now();
+    tapTimes.push(now);
+    // Keep last 8 taps
+    if (tapTimes.length > 8) tapTimes.shift();
+    // Reset if gap > 3 seconds
+    if (tapTimes.length > 1 && now - tapTimes[tapTimes.length - 2] > 3000) {
+      tapTimes = [now];
+    }
+    if (tapTimes.length >= 2) {
+      const gaps = [];
+      for (let i = 1; i < tapTimes.length; i++) gaps.push(tapTimes[i] - tapTimes[i-1]);
+      const avgGap = gaps.reduce((a,b) => a+b, 0) / gaps.length;
+      const bpm = Math.round(60000 / avgGap);
+      document.getElementById('tap-tempo-val').textContent = bpm;
+    } else {
+      document.getElementById('tap-tempo-val').textContent = '…';
+    }
+  });
+
+  document.getElementById('tap-tempo-use').addEventListener('click', () => {
+    const val = document.getElementById('tap-tempo-val').textContent;
+    const bpm = parseInt(val);
+    if (!bpm) return;
+    // Map BPM to scroll speed: 60bpm ≈ speed 30, 120bpm ≈ speed 60
+    // Formula: speed = bpm * 0.5
+    const speed = Math.max(8, Math.min(200, Math.round(bpm * 0.5)));
+    // Store in viewer via a custom event
+    document.dispatchEvent(new CustomEvent('set-scroll-speed', { detail: speed }));
+    showToast('Scroll speed set from ' + bpm + ' BPM');
+  });
+
   // OCR reset button
   document.getElementById('ocr-reset').addEventListener('click', () => {
     document.getElementById('ocr-correction-panel').style.display = 'none';
@@ -127,10 +161,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   searchEl.addEventListener('input', () => renderSongList(searchEl.value));
   await loadSongs();
 
-  function openSong(song) {
+  function openSong(song, queueData, queueIdx) {
     currentViewerSong = song;
     showScreen('viewer');
-    Viewer.open(song);
+    Viewer.open(song, queueData, queueIdx);
+  }
+
+  // Open a song from setlist with full queue
+  function openSongInQueue(songs, idx) {
+    openSong(songs[idx], songs, idx);
   }
 
   function openEditor(song) {
@@ -319,12 +358,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  function autoDetectKey(chordproContent) {
+    // Find first [Chord] token and use its root as the key
+    const m = chordproContent.match(/\[([A-G][#b]?)/);
+    return m ? m[1] : '';
+  }
+
   async function saveImportedSong(title, artist, content, format) {
     const song = {
       id:        uuid(),
       title,
       artist,
-      key:       '',
+      key:       format === 'chordpro' ? autoDetectKey(content) : '',
       capo:      0,
       bpm:       null,
       createdAt: Date.now(),
