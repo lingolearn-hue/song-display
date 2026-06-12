@@ -1,6 +1,6 @@
 // sw.js — song-display service worker
 // APP_VERSION must be bumped with every release that changes cached files.
-const APP_VERSION = '5.0';
+const APP_VERSION = '6.0';
 const CACHE       = 'song-display-' + APP_VERSION;
 
 const APP_SHELL = [
@@ -17,6 +17,13 @@ const APP_SHELL = [
   './ocr.js',
   './app.js',
   './manifest.json',
+  './icon-32.png',
+  './icon-120.png',
+  './icon-152.png',
+  './icon-167.png',
+  './icon-180.png',
+  './icon-192.png',
+  './icon-512.png',
 ];
 
 // ── Install: pre-cache app shell ──────────────────────────
