@@ -151,72 +151,81 @@ document.addEventListener('DOMContentLoaded', async () => {
   let activeLangs = new Set();
   let activeTags  = new Set();
 
+  function tagEmoji(tag) {
+    const map = { christmas:'🎄', folk:'🪕', hymn:'⛪', anthem:'🏛️',
+                  lullaby:'🌙', spiritual:'✝️', classical:'🎼', traditional:'🎵' };
+    return map[tag] || '🏷';
+  }
+
+  // ── Dropdown filter menus ─────────────────────────────────
   function buildFilterRow() {
-    // Collect all languages and tags across songs
     const langs = new Set();
     const tags  = new Set();
     allSongs.forEach(s => {
       if (s.texts) s.texts.forEach(t => { if (t.language) langs.add(t.language); });
       if (s.tags)  s.tags.forEach(t => tags.add(t));
     });
+    buildDropdown('lang', [...langs].sort(), activeLangs,
+      l => (LANG_FLAG[l] || '🌐') + ' ' + (LANG_NAME[l] || l));
+    buildDropdown('tag', [...tags].sort(), activeTags,
+      t => tagEmoji(t) + ' ' + t);
+    updateFilterClear();
+  }
 
-    // Language chips
-    const langEl = document.getElementById('lang-filters');
-    langEl.innerHTML = '';
-    // "All" chip
-    const allChip = makeChip('All', '', activeLangs.size === 0, () => {
-      activeLangs.clear();
-      buildFilterRow();
-      renderSongList(searchEl.value);
-    });
-    langEl.appendChild(allChip);
-
-    [...langs].sort().forEach(lang => {
-      const flag = LANG_FLAG[lang] || '🌐';
-      const name = LANG_NAME[lang] || lang;
-      const chip = makeChip(flag, name, activeLangs.has(lang), () => {
-        if (activeLangs.has(lang)) activeLangs.delete(lang);
-        else activeLangs.add(lang);
+  function buildDropdown(type, items, activeSet, labelFn) {
+    const menu    = document.getElementById(type + '-dropdown-menu');
+    const countEl = document.getElementById(type + '-count');
+    menu.innerHTML = '';
+    items.forEach(item => {
+      const row = document.createElement('label');
+      row.className = 'filter-menu-row';
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = activeSet.has(item);
+      cb.addEventListener('change', () => {
+        if (cb.checked) activeSet.add(item); else activeSet.delete(item);
         buildFilterRow();
         renderSongList(searchEl.value);
       });
-      langEl.appendChild(chip);
+      row.appendChild(cb);
+      row.appendChild(document.createTextNode(' ' + labelFn(item)));
+      menu.appendChild(row);
     });
+    countEl.textContent = activeSet.size ? ' (' + activeSet.size + ')' : '';
+  }
 
-    // Tag chips
-    const tagEl = document.getElementById('tag-filters');
-    tagEl.innerHTML = '';
-    if (tags.size === 0) {
-      tagEl.style.display = 'none';
-      document.querySelector('.filter-divider').style.display = 'none';
+  function updateFilterClear() {
+    const clearBtn = document.getElementById('filter-clear');
+    if (activeLangs.size || activeTags.size) {
+      clearBtn.classList.remove('hidden');
     } else {
-      tagEl.style.display = 'flex';
-      document.querySelector('.filter-divider').style.display = 'block';
-      [...tags].sort().forEach(tag => {
-        const chip = makeChip(tagEmoji(tag) + ' ' + tag, '', activeTags.has(tag), () => {
-          if (activeTags.has(tag)) activeTags.delete(tag);
-          else activeTags.add(tag);
-          buildFilterRow();
-          renderSongList(searchEl.value);
-        });
-        tagEl.appendChild(chip);
-      });
+      clearBtn.classList.add('hidden');
     }
+    // Highlight dropdown buttons when active
+    document.getElementById('lang-dropdown-btn').classList.toggle('has-active', activeLangs.size > 0);
+    document.getElementById('tag-dropdown-btn').classList.toggle('has-active', activeTags.size > 0);
   }
 
-  function makeChip(label, title, active, onClick) {
-    const btn = document.createElement('button');
-    btn.className = 'filter-chip' + (active ? ' active' : '');
-    btn.textContent = label;
-    if (title) btn.title = title;
-    btn.addEventListener('click', onClick);
-    return btn;
-  }
-
-  function tagEmoji(tag) {
-    const map = { christmas:'🎄', folk:'🪕', hymn:'⛪', anthem:'🏛️',
-                  lullaby:'🌙', spiritual:'✝️', classical:'🎼', traditional:'🎵' };
-    return map[tag] || '🏷️';
+  // Wire dropdown toggles — close others when opening one
+  function initFilterDropdowns() {
+    ['lang','tag'].forEach(type => {
+      const btn  = document.getElementById(type + '-dropdown-btn');
+      const menu = document.getElementById(type + '-dropdown-menu');
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const isOpen = !menu.classList.contains('hidden');
+        // Close all menus
+        document.querySelectorAll('.filter-dropdown-menu').forEach(m => m.classList.add('hidden'));
+        if (!isOpen) menu.classList.remove('hidden');
+      });
+    });
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.filter-dropdown-menu').forEach(m => m.classList.add('hidden'));
+    });
+    document.getElementById('filter-clear').addEventListener('click', () => {
+      activeLangs.clear(); activeTags.clear();
+      buildFilterRow(); renderSongList(searchEl.value);
+    });
   }
 
   function songMatchesFilters(song) {
@@ -272,6 +281,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   searchEl.addEventListener('input', () => renderSongList(searchEl.value));
   await loadSongs();
   buildFilterRow();
+  initFilterDropdowns();
 
   function openSong(song, queueData, queueIdx) {
     currentViewerSong = song;
