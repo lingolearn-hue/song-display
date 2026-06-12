@@ -4,9 +4,31 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // ── Boot ──────────────────────────────────────────────────
   await DB.open();
-  await DB.seedIfEmpty();
+  await DB.migrate();   // runs data migrations, seeds if empty
   Viewer.init();
   Editor.init();
+
+  // ── Service worker version notifications ──────────────────
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('message', e => {
+      if (e.data && e.data.type === 'NEW_VERSION') {
+        showUpdateBanner();
+      }
+    });
+  }
+
+  function showUpdateBanner() {
+    let banner = document.getElementById('update-banner');
+    if (banner) return;  // already showing
+    banner = document.createElement('div');
+    banner.id = 'update-banner';
+    banner.className = 'update-banner';
+    banner.innerHTML = 'New version available. <button id="update-reload">Reload</button>';
+    document.body.appendChild(banner);
+    document.getElementById('update-reload').addEventListener('click', () => {
+      window.location.reload();
+    });
+  }
 
   // ── Screen navigation ─────────────────────────────────────
   const navTabs = document.querySelectorAll('.nav-tab');
