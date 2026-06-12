@@ -1,284 +1,275 @@
-// data.js — sample songs in ChordPro format
+// data.js — sample songs using public domain / traditional material only
+// All songs below are in the public domain (pre-1928 compositions, traditional folk).
 
 const SONGS = [
   {
-    id: '1',
-    title: 'Hallelujah',
-    artist: 'Leonard Cohen',
-    key: 'C',
+    id: 'pd-001',
+    title: 'Scarborough Fair',
+    artist: 'Traditional English',
+    key: 'Am',
+    capo: 0,
+    bpm: 76,
+    texts: [
+      {
+        id: 'pd-001-t1',
+        label: 'Original',
+        format: 'chordpro',
+        language: 'en',
+        content: `{start_of_verse: Verse 1}
+[Am]Are you going to [G]Scarborough [Am]Fair?
+[C]Parsley, [Am]sage, rose[C]mary [D]and [Am]thyme
+Re[C]member me to [Em]one who lives [Am]there
+[Am]She once [C]was a [D]true love of [Am]mine
+{end_of_verse}
+
+{start_of_verse: Verse 2}
+[Am]Tell her to make me a [G]cambric [Am]shirt
+[C]Parsley, [Am]sage, rose[C]mary [D]and [Am]thyme
+With[C]out no seams nor [Em]needle work
+[Am]Then she'll [C]be a [D]true love of [Am]mine
+{end_of_verse}
+
+{start_of_verse: Verse 3}
+[Am]Tell her to find me an [G]acre of [Am]land
+[C]Parsley, [Am]sage, rose[C]mary [D]and [Am]thyme
+Be[C]tween the salt water [Em]and the sea [Am]strand
+[Am]Then she'll [C]be a [D]true love of [Am]mine
+{end_of_verse}
+
+{start_of_verse: Verse 4}
+[Am]Tell her to reap it with a [G]sickle of [Am]leather
+[C]Parsley, [Am]sage, rose[C]mary [D]and [Am]thyme
+And [C]gather it all in a [Em]bunch of [Am]heather
+[Am]Then she'll [C]be a [D]true love of [Am]mine
+{end_of_verse}`
+      }
+    ]
+  },
+  {
+    id: 'pd-002',
+    title: 'Amazing Grace',
+    artist: 'John Newton (1772)',
+    key: 'G',
+    capo: 0,
+    bpm: 68,
+    texts: [
+      {
+        id: 'pd-002-t1',
+        label: 'Original',
+        format: 'chordpro',
+        language: 'en',
+        content: `{start_of_verse: Verse 1}
+[G]Amazing [G7]grace how [C]sweet the [G]sound
+That saved a [G]wretch like [D]me
+[G]I once was [G7]lost but [C]now am [G]found
+Was [G]blind but [D]now I [G]see
+{end_of_verse}
+
+{start_of_verse: Verse 2}
+[G]'Twas grace that [G7]taught my [C]heart to [G]fear
+And grace my [G]fears re[D]lieved
+[G]How precious [G7]did that [C]grace ap[G]pear
+The [G]hour I [D]first be[G]lieved
+{end_of_verse}
+
+{start_of_verse: Verse 3}
+[G]Through many [G7]dangers, [C]toils and [G]snares
+I have al[G]ready [D]come
+[G]'Tis grace has [G7]brought me [C]safe thus [G]far
+And [G]grace will [D]lead me [G]home
+{end_of_verse}
+
+{start_of_verse: Verse 4}
+[G]When we've been [G7]there ten [C]thousand [G]years
+Bright shining [G]as the [D]sun
+[G]We've no less [G7]days to [C]sing God's [G]praise
+Than [G]when we'd [D]first be[G]gun
+{end_of_verse}`
+      }
+    ]
+  },
+  {
+    id: 'pd-003',
+    title: 'Greensleeves',
+    artist: 'Traditional English (16th century)',
+    key: 'Am',
+    capo: 0,
+    bpm: 80,
+    texts: [
+      {
+        id: 'pd-003-t1',
+        label: 'Original',
+        format: 'chordpro',
+        language: 'en',
+        content: `{start_of_verse: Verse 1}
+[Am]Alas my love [C]you do me [G]wrong
+To [G]cast me off dis[Am]courteously
+For [Am]I have loved [C]you so [G]long
+De[G]lighting in your [Am]company
+{end_of_verse}
+
+{start_of_chorus: Chorus}
+[C]Greensleeves was [G]all my joy
+[G]Greensleeves was [Am]my delight
+[C]Greensleeves was my [G]heart of gold
+And [G]who but my Lady [Am]Greensleeves
+{end_of_chorus}
+
+{start_of_verse: Verse 2}
+[Am]I have been ready [C]at your hand
+To [G]grant whatever [Am]you would crave
+[Am]I have both waged [C]life and [G]land
+Your [G]love and good will [Am]for to have
+{end_of_verse}
+
+{start_of_chorus: Chorus}
+[C]Greensleeves was [G]all my joy
+[G]Greensleeves was [Am]my delight
+[C]Greensleeves was my [G]heart of gold
+And [G]who but my Lady [Am]Greensleeves
+{end_of_chorus}
+
+{start_of_verse: Verse 3}
+[Am]My men were clothed [C]all in [G]green
+And [G]they did ever [Am]wait on thee
+[Am]All this was gallant [C]to be [G]seen
+And [G]yet thou wouldst not [Am]love me
+{end_of_verse}
+
+{start_of_chorus: Chorus}
+[C]Greensleeves was [G]all my joy
+[G]Greensleeves was [Am]my delight
+[C]Greensleeves was my [G]heart of gold
+And [G]who but my Lady [Am]Greensleeves
+{end_of_chorus}`
+      }
+    ]
+  },
+  {
+    id: 'pd-004',
+    title: 'Danny Boy',
+    artist: 'Traditional Irish (Londonderry Air)',
+    key: 'G',
+    capo: 0,
+    bpm: 60,
+    texts: [
+      {
+        id: 'pd-004-t1',
+        label: 'Original',
+        format: 'chordpro',
+        language: 'en',
+        content: `{start_of_verse: Verse 1}
+Oh [G]Danny Boy, the pipes, the [G7]pipes are [C]calling
+From glen to [G]glen and down the [D]mountain [D7]side
+The summer's [G]gone and all the [G7]roses [C]falling
+It's you, it's [G]you must go and [D]I must [G]bide
+{end_of_verse}
+
+{start_of_verse: Verse 2}
+But come ye [G]back when summer's [G7]in the [C]meadow
+Or when the [G]valley's hushed and [D]white with [D7]snow
+It's I'll be [G]there in sunshine [G7]or in [C]shadow
+Oh Danny [G]Boy, oh Danny [D]Boy, I love you [G]so
+{end_of_verse}
+
+{start_of_verse: Verse 3}
+But if ye [G]come and all the [G7]flowers are [C]dying
+If I am [G]dead, as dead I [D]well may [D7]be
+Ye'll come and [G]find the place where [G7]I am [C]lying
+And kneel and [G]say an Ave [D]there for [G]me
+{end_of_verse}
+
+{start_of_verse: Verse 4}
+And I shall [G]hear, though soft you [G7]tread a[C]bove me
+And all my [G]grave will warmer, [D]sweeter [D7]be
+For you will [G]bend and tell me [G7]that you [C]love me
+And I shall [G]sleep in peace un[D]til you [G]come to me
+{end_of_verse}`
+      }
+    ]
+  },
+  {
+    id: 'pd-005',
+    title: 'House of the Rising Sun',
+    artist: 'Traditional American Folk',
+    key: 'Am',
+    capo: 0,
+    bpm: 78,
+    texts: [
+      {
+        id: 'pd-005-t1',
+        label: 'Original',
+        format: 'chordpro',
+        language: 'en',
+        content: `{start_of_verse: Verse 1}
+[Am]There is a [C]house in [D]New Or[F]leans
+They [Am]call the [C]Rising [E]Sun
+[Am]And it's been the [C]ruin of [D]many a poor [F]girl
+And [Am]me, oh [E]God, I'm [Am]one
+{end_of_verse}
+
+{start_of_verse: Verse 2}
+[Am]My mother [C]was a [D]tailor
+She [Am]sewed my [C]new blue [E]jeans
+[Am]My sweetheart [C]was a [D]gambler, Lord
+Down [Am]in New Or[E]leans
+{end_of_verse}
+
+{start_of_verse: Verse 3}
+[Am]Now the only [C]thing a [D]gambler [F]needs
+Is a [Am]suitcase [C]and a [E]trunk
+[Am]And the only [C]time he's [D]satisfied
+Is [Am]when he's on a [E]drunk
+{end_of_verse}
+
+{start_of_verse: Verse 4}
+[Am]Oh mother [C]tell your [D]children
+Not to [Am]do what [C]I have [E]done
+[Am]Spend your lives in [C]sin and [D]misery
+In the [Am]House of the [E]Rising [Am]Sun
+{end_of_verse}`
+      }
+    ]
+  },
+  {
+    id: 'pd-006',
+    title: 'Wayfaring Stranger',
+    artist: 'Traditional American Spiritual',
+    key: 'Dm',
     capo: 0,
     bpm: 72,
     texts: [
       {
-        id: 't1',
+        id: 'pd-006-t1',
         label: 'Original',
         format: 'chordpro',
         language: 'en',
         content: `{start_of_verse: Verse 1}
-[C]I heard there was a [Am]secret chord
-[C]That David played and it [Am]pleased the Lord
-[F]But you don't really [G]care for music, [C]do [G]you?
-[C]Well it goes like [F]this: the [G]fourth, the [Am]fifth
-The [F]minor fall, the [G]major lift
-The [G]baffled king com[Em]posing Halle[Am]lujah
+[Dm]I am a poor wayfaring [Dm]stranger
+Trav'ling through [F]this world of [Dm]woe
+Yet there's no [Dm]sickness, toil nor [Gm]danger
+In that bright [Dm]land to [A]which I [Dm]go
 {end_of_verse}
 
 {start_of_chorus: Chorus}
-Halle[F]lujah, Halle[Am]lujah
-Halle[F]lujah, Halle[C]lu — [G]jah
-Halle[C]lujah
+I'm going [F]there to see my [C]father
+I'm going [Dm]there no more to [Dm]roam
+I'm just going [F]over Jordan
+I'm just going [A]over [Dm]home
 {end_of_chorus}
 
 {start_of_verse: Verse 2}
-[C]Your faith was strong but [Am]you needed proof
-[C]You saw her bathing [Am]on the roof
-Her [F]beauty and the [G]moonlight over[C]threw [G]you
-[C]She tied you to a [F]kitchen [G]chair
-She [Am]broke your throne, and she [F]cut your hair
-And [G]from your lips she [Em]drew the Halle[Am]lujah
+[Dm]I know dark clouds will gather [Dm]round me
+I know my [F]way is rough and [Dm]steep
+Yet beauteous [Dm]fields lie just be[Gm]fore me
+Where God's re[Dm]deemed their [A]vigils [Dm]keep
 {end_of_verse}
 
 {start_of_chorus: Chorus}
-Halle[F]lujah, Halle[Am]lujah
-Halle[F]lujah, Halle[C]lu — [G]jah
-Halle[C]lujah
-{end_of_chorus}
-
-{start_of_verse: Verse 3}
-[C]Maybe I've been [Am]here before
-[C]I know this room, I've [Am]walked this floor
-I [F]used to live a[G]lone before I [C]knew [G]you
-[C]I've seen your flag on the [F]marble [G]arch
-But [Am]love is not a [F]victory march
-It's a [G]cold and it's a [Em]broken Halle[Am]lujah
-{end_of_verse}
-
-{start_of_chorus: Chorus}
-Halle[F]lujah, Halle[Am]lujah
-Halle[F]lujah, Halle[C]lu — [G]jah
-Halle[C]lujah
-{end_of_chorus}`
-      }
-    ]
-  },
-  {
-    id: '2',
-    title: 'Wish You Were Here',
-    artist: 'Pink Floyd',
-    key: 'G',
-    capo: 0,
-    bpm: 66,
-    texts: [
-      {
-        id: 't2',
-        label: 'Original',
-        format: 'chordpro',
-        language: 'en',
-        content: `{start_of_verse: Intro / Verse 1}
-[Em7]So, so you think you can [G]tell
-[Em7]Heaven from hell?
-[Em7]Blue skies from [G]pain?
-[Em7]Can you tell a green [G]field
-From a [A]cold steel rail?
-A [Em7]smile from a [G]veil?
-Do you think you can [A]tell?
-{end_of_verse}
-
-{start_of_verse: Verse 2}
-[Em7]Did they get you to trade
-Your [G]heroes for ghosts?
-[Em7]Hot ashes for [G]trees?
-[Em7]Hot air for a [G]cool breeze?
-[A]Cold comfort for [Em7]change?
-Did you ex[G]change
-A walk-on [A]part in the war
-For a lead [G]role in a [Em7]cage?
-{end_of_verse}
-
-{start_of_chorus: Chorus}
-[C]How I wish, how I wish you were [G]here
-We're just [D]two lost souls swimming in a fish bowl
-[Am]Year after [G]year
-[C]Running over the same old ground
-What have we [G]found?
-The same old [D]fears
-Wish you were [Am]here
-{end_of_chorus}`
-      }
-    ]
-  },
-  {
-    id: '3',
-    title: 'Blackbird',
-    artist: 'The Beatles',
-    key: 'G',
-    capo: 0,
-    bpm: 96,
-    texts: [
-      {
-        id: 't3',
-        label: 'Original',
-        format: 'chordpro',
-        language: 'en',
-        content: `{start_of_verse: Verse 1}
-[G]Blackbird singing in the [Am]dead of [G/B]night
-[C]Take these broken [Db]wings and [D]learn to [Eb]fly
-[G]All your [Am]life
-[G]You were only [C]waiting for this [G]moment to a[G]rise
-{end_of_verse}
-
-{start_of_verse: Verse 2}
-[G]Blackbird singing in the [Am]dead of [G/B]night
-[C]Take these sunken [Db]eyes and [D]learn to [Eb]see
-[G]All your [Am]life
-[G]You were only [C]waiting for this [G]moment to be [G]free
-{end_of_verse}
-
-{start_of_bridge: Bridge}
-[F]Blackbird [Em]fly, [Dm]Blackbird [C]fly
-[Bb]Into the [C]light of the [F]dark black [G]night
-{end_of_bridge}
-
-{start_of_verse: Verse 3}
-[G]Blackbird singing in the [Am]dead of [G/B]night
-[C]Take these broken [Db]wings and [D]learn to [Eb]fly
-[G]All your [Am]life
-[G]You were only [C]waiting for this [G]moment to a[G]rise
-[G]You were only [C]waiting for this [G]moment to a[G]rise
-[G]You were only [C]waiting for this [G]moment to a[G]rise
-{end_of_verse}`
-      }
-    ]
-  },
-  {
-    id: '4',
-    title: 'Fast Car',
-    artist: 'Tracy Chapman',
-    key: 'D',
-    capo: 2,
-    bpm: 100,
-    texts: [
-      {
-        id: 't4',
-        label: 'Original',
-        format: 'chordpro',
-        language: 'en',
-        content: `{start_of_verse: Verse 1}
-[Dmaj7]You got a fast car
-[Asus4]I want a ticket to anywhere
-[G6]Maybe we make a deal
-[D]Maybe together we can get somewhere
-{end_of_verse}
-
-{start_of_verse: Verse 2}
-[Dmaj7]Any place is better
-[Asus4]Starting from zero got nothing to lose
-[G6]Maybe we'll make something
-[D]Me, myself, I got nothing to prove
-{end_of_verse}
-
-{start_of_chorus: Chorus}
-[Dmaj7]You got a fast car
-[Asus4]I want a ticket to anywhere
-[G6]Maybe we make a deal
-[D]Maybe together we can get somewhere
-{end_of_chorus}
-
-{start_of_verse: Verse 3}
-[Dmaj7]I remember when we were driving, driving in your car
-[Asus4]Speed so fast, felt like I was drunk
-[G6]City lights lay out before us
-[D]And your arm felt nice wrapped around my shoulder
-{end_of_verse}`
-      }
-    ]
-  },
-  {
-    id: '5',
-    title: 'Wonderwall',
-    artist: 'Oasis',
-    key: 'F#m',
-    capo: 2,
-    bpm: 87,
-    texts: [
-      {
-        id: 't5',
-        label: 'Original',
-        format: 'chordpro',
-        language: 'en',
-        content: `{start_of_verse: Verse 1}
-[Em7]Today is gonna be the day
-That they're gonna [G]throw it back to [Dsus4]you
-[Em7]By now you should've somehow
-Realised [G]what you gotta [Dsus4]do
-[Em7]I don't believe that [G]anybody
-[A7sus4]Feels the way I do
-About you [Dsus4]now
-{end_of_verse}
-
-{start_of_verse: Verse 2}
-[Em7]Backbeat, the word is on the street
-That the fire in your [G]heart is [Dsus4]out
-[Em7]I'm sure you've heard it all before
-But you never really [G]had a [Dsus4]doubt
-[Em7]I don't believe that [G]anybody
-[A7sus4]Feels the way I do
-About you [Dsus4]now
-{end_of_verse}
-
-{start_of_bridge: Pre-Chorus}
-And all the [C]roads we have to walk are [D]winding
-And all the [C]lights that lead us there are [D]blinding
-There are many [C]things that I would
-Like to [D]say to you [Em7]but I don't know how
-{end_of_bridge}
-
-{start_of_chorus: Chorus}
-Because [G]maybe
-[Dsus4]You're gonna be the one that [Am]saves me
-[C]And after all
-[G]You're my wonder[Dsus4]wall
-{end_of_chorus}`
-      }
-    ]
-  },
-  {
-    id: '6',
-    title: 'Hotel California',
-    artist: 'Eagles',
-    key: 'Bm',
-    capo: 0,
-    bpm: 75,
-    texts: [
-      {
-        id: 't6',
-        label: 'Original',
-        format: 'chordpro',
-        language: 'en',
-        content: `{start_of_verse: Verse 1}
-[Bm]On a dark desert highway, [F#]cool wind in my hair
-[A]Warm smell of colitas [E]rising up through the air
-[G]Up ahead in the distance, [D]I saw a shimmering light
-[Em]My head grew heavy and my sight grew dim
-[F#]I had to stop for the night
-{end_of_verse}
-
-{start_of_verse: Verse 2}
-[Bm]There she stood in the doorway; [F#]I heard the mission bell
-[A]And I was thinking to myself this could be
-[E]heaven or this could be hell
-[G]Then she lit up a candle [D]and she showed me the way
-[Em]There were voices down the corridor,
-[F#]I thought I heard them say:
-{end_of_verse}
-
-{start_of_chorus: Chorus}
-[G]Welcome to the Hotel Cali[D]fornia
-[F#]Such a lovely place (such a [Bm]lovely place)
-Such a lovely [Em]face
-[G]Plenty of room at the Hotel Cali[D]fornia
-[F#]Any time of year (any [Em]time of year)
-You can find it [F#]here
+I'm going [F]there to see my [C]mother
+She said she'd [Dm]meet me when I [Dm]come
+I'm just going [F]over Jordan
+I'm just going [A]over [Dm]home
 {end_of_chorus}`
       }
     ]
@@ -287,18 +278,13 @@ You can find it [F#]here
 
 const SETLISTS = [
   {
-    id: 'sl1',
-    name: 'Sunday Service',
-    songIds: ['1', '3', '2', '4']
+    id: 'sl-demo-1',
+    name: 'Folk Evening',
+    songIds: ['pd-001', 'pd-003', 'pd-005', 'pd-006']
   },
   {
-    id: 'sl2',
-    name: 'Open Mic Night',
-    songIds: ['5', '6', '1']
-  },
-  {
-    id: 'sl3',
-    name: 'Campfire Set',
-    songIds: ['2', '3', '4', '5', '6']
+    id: 'sl-demo-2',
+    name: 'Hymns',
+    songIds: ['pd-002', 'pd-004']
   }
 ];
