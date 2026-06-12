@@ -1179,3 +1179,9 @@ body.editor-open .editor-backdrop {
 
 /* ── Setlist toolbar buttons ── */
 .setlist-toolbar { flex-wrap: wrap; }
+
+/* ── Drop zone active state ── */
+.drop-zone.drop-active {
+  border-color: var(--chord);
+  background: var(--chord-bg);
+}
