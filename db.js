@@ -92,22 +92,43 @@ const DB = (() => {
     return wrap(tx('settings', 'readwrite').put({ key, value }));
   }
 
-  // ── Seed with sample data if empty ───────────────────────
-  // Also removes old copyrighted sample songs if present from v0.1/v0.2.
-  async function seedIfEmpty() {
+  // ── Data versioning & migration ───────────────────────────
+  // Bump DATA_VERSION whenever sample data changes or a migration is needed.
+  const DATA_VERSION = 2;  // v3.1: replaced copyrighted songs with public domain
+
+  async function migrate() {
     await open();
-    // IDs used in v0.1/v0.2 for copyrighted songs — remove them
-    const oldIds = ['1','2','3','4','5','6'];
-    for (const id of oldIds) {
-      const s = await getSong(id);
-      if (s) await deleteSong(id);
+    const stored = await getSetting('dataVersion', 0);
+    if (stored >= DATA_VERSION) return;
+
+    // v1→v2: remove copyrighted sample songs from v0.1/v0.2
+    if (stored < 2) {
+      const copyrightedIds = ['1','2','3','4','5','6'];
+      for (const id of copyrightedIds) {
+        const s = await getSong(id);
+        if (s) await deleteSong(id);
+      }
+      // Remove old demo setlists
+      const oldSlIds = ['sl1','sl2','sl3'];
+      for (const id of oldSlIds) {
+        try {
+          await wrap(tx('setlists', 'readwrite').delete(id));
+        } catch(_) {}
+      }
     }
-    const existing = await getAllSongs();
-    if (existing.length > 0) return false;
-    for (const song of SONGS)    await putSong({ ...song });
-    for (const sl   of SETLISTS) await putSetlist({ ...sl });
-    return true;
+
+    // Seed public domain songs if library is now empty
+    const remaining = await getAllSongs();
+    if (remaining.length === 0) {
+      for (const song of SONGS)    await putSong({ ...song });
+      for (const sl   of SETLISTS) await putSetlist({ ...sl });
+    }
+
+    await setSetting('dataVersion', DATA_VERSION);
   }
+
+  // Keep seedIfEmpty as alias for backwards compat with any cached app.js
+  async function seedIfEmpty() { return migrate(); }
 
   // ── Export all as .sbook JSON ─────────────────────────────
   async function exportSbook() {
@@ -135,7 +156,7 @@ const DB = (() => {
     open, getAllSongs, getSong, putSong, deleteSong,
     getAllSetlists, putSetlist, deleteSetlist,
     getSetting, setSetting,
-    seedIfEmpty, exportSbook, importSbook,
+    migrate, seedIfEmpty, exportSbook, importSbook,
   };
 })();
 
