@@ -1322,3 +1322,77 @@ body.editor-open .editor-backdrop {
   margin-top: 12px;
   align-items: center;
 }
+
+/* ══════════════════════════════════════════════
+   v0.5 additions
+══════════════════════════════════════════════ */
+
+/* ── Voice status indicator ── */
+.voice-status {
+  position: absolute;
+  top: 44px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: var(--chord);
+  background: var(--chord-bg);
+  padding: 3px 10px;
+  border-radius: 20px;
+  z-index: 28;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s;
+  white-space: nowrap;
+}
+body.voice-active .voice-status { opacity: 1; }
+
+/* Voice button active state */
+.ctrl-btn.active[id="voice-toggle"] {
+  background: var(--chord);
+  color: #0d1117;
+  border-color: var(--chord);
+  animation: pulse-voice 2s ease-in-out infinite;
+}
+@keyframes pulse-voice {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .65; }
+}
+
+/* ── Next-song bar ── */
+.next-song-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 35;
+  transform: translateY(100%);
+  transition: transform .28s cubic-bezier(.32,.72,0,1);
+}
+.next-song-bar.visible { transform: translateY(0); }
+
+.next-song-label {
+  font-size: 11px;
+  color: var(--sub);
+  flex-shrink: 0;
+}
+.next-song-title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.next-song-advance { height: 28px; padding: 0 14px; font-size: 12px; flex-shrink: 0; }
+.next-song-dismiss { flex-shrink: 0; }
+
+/* When next-song bar is visible, shrink tap zones so they don't overlap */
+.next-song-bar.visible ~ .tap-menu-zone { bottom: 48px; }
+
+/* ── BPM tap val colour when set ── */
+#tap-tempo-val { min-width: 36px; }
