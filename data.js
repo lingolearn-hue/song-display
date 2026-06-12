@@ -1815,4 +1815,417 @@ const SETLISTS = [
     name: '中文歌曲 (Chinese Songs)',
     songIds: ['pd-039','pd-040','pd-041','pd-042','pd-043','pd-044','pd-045','pd-046']
   },
+
+  // ── Deutsche Weihnachtslieder ────────────────────────────
+
+  {
+    id: 'pd-047',
+    title: 'O Tannenbaum',
+    artist: 'Ernst Anschütz (1824)',
+    key: 'F', capo: 0, bpm: 76,
+    texts: [
+      {
+        id: 'pd-047-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
+        content: `{start_of_verse: Strophe 1}
+[F]O Tannenbaum, o [Bb]Tannen[F]baum
+Wie [C7]treu sind dei[F]ne Blätter
+[F]O Tannenbaum, o [Bb]Tannen[F]baum
+Wie [C7]treu sind dei[F]ne Blätter
+Du [Bb]grünst nicht nur zur [F]Sommerzeit
+Nein [C7]auch im Winter wenn es [F]schneit
+[F]O Tannenbaum, o [Bb]Tannen[F]baum
+Wie [C7]treu sind dei[F]ne Blätter
+{end_of_verse}
+
+{start_of_verse: Strophe 2}
+[F]O Tannenbaum, o [Bb]Tannen[F]baum
+Du [C7]kannst mir sehr ge[F]fallen
+[F]O Tannenbaum, o [Bb]Tannen[F]baum
+Du [C7]kannst mir sehr ge[F]fallen
+Wie [Bb]oft hat nicht zur [F]Weihnachtszeit
+Ein [C7]Baum von dir mich hoch er[F]freut
+[F]O Tannenbaum, o [Bb]Tannen[F]baum
+Du [C7]kannst mir sehr ge[F]fallen
+{end_of_verse}`
+      },
+      {
+        id: 'pd-047-t2', label: 'English', format: 'chordpro', language: 'en',
+        content: `{start_of_verse: Verse 1}
+[F]O Christmas tree, o [Bb]Christmas [F]tree
+How [C7]lovely are thy [F]branches
+[F]O Christmas tree, o [Bb]Christmas [F]tree
+How [C7]lovely are thy [F]branches
+Not [Bb]only green in [F]summer's heat
+But [C7]also winter's snow and [F]sleet
+[F]O Christmas tree, o [Bb]Christmas [F]tree
+How [C7]lovely are thy [F]branches
+{end_of_verse}`
+      }
+    ]
+  },
+
+  {
+    id: 'pd-048',
+    title: 'O du fröhliche',
+    artist: 'Johannes Daniel Falk (1816)',
+    key: 'G', capo: 0, bpm: 72,
+    texts: [
+      {
+        id: 'pd-048-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
+        content: `{start_of_verse: Strophe 1}
+[G]O du fröhliche
+[D7]O du selige
+[G]Gnadenbringende [D7]Weih[G]nachtszeit
+[G]Welt ging ver[C]loren
+[G]Christ ist ge[D7]boren
+[G]Freue, freue [D7]dich, o [G]Christen[D7]heit
+{end_of_verse}
+
+{start_of_verse: Strophe 2}
+[G]O du fröhliche
+[D7]O du selige
+[G]Gnadenbringende [D7]Weih[G]nachtszeit
+[G]Christ ist er[C]schienen
+[G]Uns zu ver[D7]sühnen
+[G]Freue, freue [D7]dich, o [G]Christen[D7]heit
+{end_of_verse}
+
+{start_of_verse: Strophe 3}
+[G]O du fröhliche
+[D7]O du selige
+[G]Gnadenbringende [D7]Weih[G]nachtszeit
+[G]Himmlische [C]Heere
+[G]Jauchzen dir [D7]Ehre
+[G]Freue, freue [D7]dich, o [G]Christen[D7]heit
+{end_of_verse}`
+      },
+      {
+        id: 'pd-048-t2', label: 'English', format: 'chordpro', language: 'en',
+        content: `{start_of_verse: Verse 1}
+[G]O how joyful
+[D7]O how blessed
+[G]O how mercifully [D7]comes Christ[G]mas
+[G]World was [C]lost then
+[G]Christ came to [D7]save us
+[G]Rejoice, rejoice [D7]O Christen[G]dom
+{end_of_verse}`
+      }
+    ]
+  },
+
+  {
+    id: 'pd-049',
+    title: 'Vom Himmel hoch da komm ich her',
+    artist: 'Martin Luther (1535)',
+    key: 'C', capo: 0, bpm: 76,
+    texts: [
+      {
+        id: 'pd-049-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
+        content: `{start_of_verse: Strophe 1}
+[C]Vom Himmel hoch da [G7]komm ich [C]her
+Ich bring euch gute neue [G7]Mehr
+Der guten Mär bring ich so [C]viel
+Davon ich sing'n und sagen [G7]will
+{end_of_verse}
+
+{start_of_verse: Strophe 2}
+[C]Euch ist ein Kindlein [G7]heut ge[C]born
+Von einer Jungfrau aus[G7]erkorn
+Ein Kindelein so zart und [C]fein
+Das soll eu'r Freud und [G7]Wonne sein
+{end_of_verse}
+
+{start_of_verse: Strophe 3}
+[C]Es ist der Herr Christ [G7]unser [C]Gott
+Der will euch führ'n aus [G7]aller Not
+Er will eu'r Heiland selber [C]sein
+Von allen Sünden machen [G7]rein
+{end_of_verse}`
+      },
+      {
+        id: 'pd-049-t2', label: 'English', format: 'chordpro', language: 'en',
+        content: `{start_of_verse: Verse 1}
+[C]From heaven above to [G7]earth I [C]come
+To bring good news to [G7]everyone
+Glad tidings of great [C]joy I bring
+To all the world and [G7]gladly sing
+{end_of_verse}
+
+{start_of_verse: Verse 2}
+[C]To you this night is [G7]born a [C]child
+Of Mary chosen [G7]mother mild
+This little child of [C]lowly birth
+Shall be the joy of [G7]all the earth
+{end_of_verse}`
+      }
+    ]
+  },
+
+  {
+    id: 'pd-050',
+    title: 'Ihr Kinderlein kommet',
+    artist: 'Christoph von Schmid (1798)',
+    key: 'G', capo: 0, bpm: 80,
+    texts: [
+      {
+        id: 'pd-050-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
+        content: `{start_of_verse: Strophe 1}
+[G]Ihr Kinderlein kommet o [D7]kommet doch all
+Zur Krippe her kommet in [G]Bethlehems Stall
+Und seht was in dieser [C]hochheiligen Nacht
+Der [G]Vater im Himmel für [D7]Freude uns [G]macht
+{end_of_verse}
+
+{start_of_verse: Strophe 2}
+[G]O seht in der Krippe im [D7]nächtlichen Glanz
+Ein himmlisches Kind viel [G]schöner als Lanz
+Es liegt auch im Dunkeln und [C]Kälte so lind
+Wie [G]schlummert so süße das [D7]himmlische [G]Kind
+{end_of_verse}
+
+{start_of_verse: Strophe 3}
+[G]Wer lag in dem Kripplein auf [D7]Heu und auf Stroh
+Maria und Josef be[G]trachten es froh
+Den redlichen Hirten er[C]schallet es weit
+Hier [G]wohnet in Armut die [D7]Herrlich[G]keit
+{end_of_verse}`
+      }
+    ]
+  },
+
+  {
+    id: 'pd-051',
+    title: 'Es ist ein Ros entsprungen',
+    artist: 'Traditional German (c. 1600)',
+    key: 'G', capo: 0, bpm: 68,
+    texts: [
+      {
+        id: 'pd-051-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
+        content: `{start_of_verse: Strophe 1}
+[G]Es ist ein Ros ent[D7]sprungen
+Aus einer Wurzel [G]zart
+Wie uns die Alten [C]sungen
+Von Jesse kam die [G]Art
+Und hat ein Blümlein [D7]bracht
+Mitten im kalten [G]Winter
+Wohl zu der [D7]halben [G]Nacht
+{end_of_verse}
+
+{start_of_verse: Strophe 2}
+[G]Das Röslein das ich [D7]meine
+Davon Jesaja [G]sagt
+Hat uns gebracht alleine
+Marie die reine [G]Magd
+Aus Gottes ewgem [D7]Rat
+Hat sie ein Kind ge[G]boren
+Wohl zu der [D7]halben [G]Nacht
+{end_of_verse}`
+      },
+      {
+        id: 'pd-051-t2', label: 'English', format: 'chordpro', language: 'en',
+        content: `{start_of_verse: Verse 1}
+[G]Lo how a rose e'er [D7]blooming
+From tender stem hath [G]sprung
+Of Jesse's lineage [C]coming
+As men of old have [G]sung
+It came a flower [D7]bright
+Amid the cold of [G]winter
+When half-spent was the [D7]night
+{end_of_verse}`
+      }
+    ]
+  },
+
+  {
+    id: 'pd-052',
+    title: 'Leise rieselt der Schnee',
+    artist: 'Eduard Ebel (1895)',
+    key: 'C', capo: 0, bpm: 72,
+    texts: [{
+      id: 'pd-052-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
+      content: `{start_of_verse: Strophe 1}
+[C]Leise rieselt der [G7]Schnee
+Still und starr liegt der [C]See
+[F]Weihnachtlich glänzet der [C]Wald
+[G7]Freue dich's Christkind kommt [C]bald
+{end_of_verse}
+
+{start_of_verse: Strophe 2}
+[C]In den Wipfeln der [G7]Tann
+Singt die Amsel ihr [C]Lied
+[F]Weihnachtlich klinget es [C]weit
+[G7]Stimmet an mit Fröhlich[C]keit
+{end_of_verse}
+
+{start_of_verse: Strophe 3}
+[C]Bald ist heilige [G7]Nacht
+Chor der Engel er[C]wacht
+[F]Hört nur wie lieblich es [C]schallt
+[G7]Frieden den Menschen ge[C]hallt
+{end_of_verse}`
+    }]
+  },
+
+  {
+    id: 'pd-053',
+    title: 'Kling Glöckchen klingelingeling',
+    artist: 'Karl Enslin (1854)',
+    key: 'C', capo: 0, bpm: 112,
+    texts: [{
+      id: 'pd-053-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
+      content: `{start_of_chorus: Refrain}
+[C]Kling Glöckchen klingelingeling
+[C]Kling Glöckchen kling
+[F]Lasst mich ein ihr [C]Kinder
+Ist so kalt der [G7]Winter
+Öffnet mir die [C]Türen
+Lasst mich nicht er[G7]frieren
+[C]Kling Glöckchen klingelingeling
+[C]Kling Glöckchen kling
+{end_of_chorus}
+
+{start_of_verse: Strophe 1}
+[C]Mädchen hört und [G7]Bübchen schaut
+[C]Was vom Himmel nieder[G7]schaut
+[C]Christ das bringt euch al[F]le Jahr
+Gute Dinge wunder[C]bar
+[G7]Kindlein betet betet fein
+Schlafet süß im [C]Mondenschein
+{end_of_verse}
+
+{start_of_chorus: Refrain}
+[C]Kling Glöckchen klingelingeling
+[C]Kling Glöckchen kling
+[F]Lasst mich ein ihr [C]Kinder
+Ist so kalt der [G7]Winter
+Öffnet mir die [C]Türen
+Lasst mich nicht er[G7]frieren
+[C]Kling Glöckchen klingelingeling
+[C]Kling Glöckchen kling
+{end_of_chorus}`
+    }]
+  },
+
+  {
+    id: 'pd-054',
+    title: 'Morgen kommt der Weihnachtsmann',
+    artist: 'Hoffmann von Fallersleben (1835)',
+    key: 'G', capo: 0, bpm: 100,
+    texts: [{
+      id: 'pd-054-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
+      content: `{start_of_verse: Strophe 1}
+[G]Morgen kommt der Weih[D7]nachtsmann
+Kommt mit seinen [G]Gaben
+Bunter List und [C]Zuckerwerk
+Äpfel, Nuß und [G]Marzipan
+Kinder die ihn [D7]lieben
+{end_of_verse}
+
+{start_of_verse: Strophe 2}
+[G]Trommel, Pfeifen und Ge[D7]wehr
+Fahn und Säbel [G]schöne
+Reitersmann und [C]Festungsberg
+Alles wird er [G]bringen
+Doch nur für die [D7]Kinder
+Die auch folgsam [G]sind
+{end_of_verse}`
+    }]
+  },
+
+  {
+    id: 'pd-055',
+    title: 'In dulci jubilo',
+    artist: 'Heinrich Suso / Traditional (14th century)',
+    key: 'G', capo: 0, bpm: 88,
+    texts: [
+      {
+        id: 'pd-055-t1', label: 'Latein/Deutsch', format: 'chordpro', language: 'de',
+        content: `{start_of_verse: Strophe 1}
+[G]In dulci [D7]jubilo
+Nun singet und seid [G]froh
+Unsers Herzens [C]Wonne
+Liegt in präse[G]pio
+Und leuchtet als die [C]Sonne
+Matris in [G]gremio
+[D7]Alpha es et [G]O
+[D7]Alpha es et [G]O
+{end_of_verse}
+
+{start_of_verse: Strophe 2}
+[G]O Jesu [D7]parvule
+Nach dir ist mir so [G]weh
+Tröst mir mein [C]Gemüte
+O puer op[G]time
+Durch alle deine [C]Güte
+O princeps glo[G]riae
+[D7]Trahe me post [G]te
+[D7]Trahe me post [G]te
+{end_of_verse}`
+      },
+      {
+        id: 'pd-055-t2', label: 'English', format: 'chordpro', language: 'en',
+        content: `{start_of_verse: Verse 1}
+[G]In dulci [D7]jubilo
+Now sing with hearts a[G]glow
+Our delight and [C]pleasure
+Lies in præse[G]pio
+Like sunshine is our [C]treasure
+Matris in [G]gremio
+[D7]Alpha es et [G]O
+[D7]Alpha es et [G]O
+{end_of_verse}`
+      }
+    ]
+  },
+
+  {
+    id: 'pd-056',
+    title: 'Süßer die Glocken nie klingen',
+    artist: 'Friedrich Wilhelm Kritzinger (1828)',
+    key: 'G', capo: 0, bpm: 76,
+    texts: [{
+      id: 'pd-056-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
+      content: `{start_of_verse: Strophe 1}
+[G]Süßer die Glocken nie [D7]klingen
+Als zu der Weih[G]nachtszeit
+[G]Wenn durch die Lüfte ihr [D7]Bringen
+Friede und Selig[G]keit
+[C]Tönet ihr Glocken vom [G]hohen Turm
+[D7]Tönet durch Frieden und [G]Sturm
+{end_of_verse}
+
+{start_of_verse: Strophe 2}
+[G]Wunderbar tönen die [D7]Glocken
+Aus dem verschneiten [G]Tal
+[G]Locken vom Schlummer und [D7]Stocken
+Zur heiligen Weih[G]nacht
+[C]Tönet ihr Glocken vom [G]hohen Turm
+[D7]Tönet durch Frieden und [G]Sturm
+{end_of_verse}`
+    }]
+  },
+
+  {
+    id: 'pd-057',
+    title: 'Fröhliche Weihnacht überall',
+    artist: 'Hermann Kletke (1841)',
+    key: 'C', capo: 0, bpm: 96,
+    texts: [{
+      id: 'pd-057-t1', label: 'Deutsch', format: 'chordpro', language: 'de',
+      content: `{start_of_verse: Strophe 1}
+[C]Fröhliche Weihnacht über[G7]all
+Tönet durch die [C]Lüfte froher [F]Schall
+[C]Weihnachtston Weihnachts[G7]baum
+Weihnachtsduft im [C]ganzen Raum
+{end_of_verse}
+
+{start_of_verse: Strophe 2}
+[C]Fröhliche Weihnacht überall
+Tönet durch die [G7]Lüfte froher [C]Schall
+[F]Brennt im Herzen fromm und [C]hell
+Eurer Liebe [G7]Quell und [C]Well
+{end_of_verse}`
+    }]
+  },
+
 ];
