@@ -1,46 +1,38 @@
-# song-display v0.3
+# song-display v0.5
 
-Static HTML/CSS/JS. No build step — open `index.html` in a browser.
-For PWA install / service worker to work, serve over HTTP (e.g. `npx serve .`).
+Static HTML/CSS/JS. Open `index.html` in a browser, or serve with `npx serve .` for PWA/SW.
 
-## What's new in v0.3
+## What's new in v0.5
 
-- **Song editing** — Edit button in song list and viewer opens a slide-in panel.
-  Edit title, artist, key, capo, BPM. Edit text content, label, format, language.
-  Add or delete additional texts per song. Delete the whole song.
-- **Setlist editing** — Create, rename, delete setlists.
-  Add songs via a search picker. Remove songs from a setlist.
-  Drag-to-reorder songs within a setlist.
-- **URL import** — Paste a URL from Ultimate Guitar, Chordie, or E-Chords.
-  Fetched via configurable CORS proxy (default: allorigins.win).
-  Parsed into ChordPro, feeds into the same preview/save flow.
-  Proxy URL configurable in Settings.
-- **Manual entry preview** — Manual tab now also shows preview before saving.
-- **PWA** — manifest.json + service worker for offline use and home screen install.
-  Register by serving over HTTP (file:// does not activate service workers).
+- **Voice page turner** — tap 🎤 Voice in the control drawer to start. Speech recognition
+  listens continuously and advances pages when recognised words match upcoming lyrics.
+  Intentionally low confidence threshold — works lazily, following rather than leading.
+  Auto-detects song language (EN/DE/FR/ES/IT/NL/ZH) and sets recognition locale.
+  Works on Chrome desktop, Chrome Android, and Safari iOS (iOS requires a user gesture).
+- **Setlist queue** — opening a song from a setlist now loads the full setlist as a queue.
+  A "Next up" bar slides up from the bottom on the last page. Tap ▶ Play to advance,
+  or ✕ to dismiss.
+- **Per-song font & transpose memory** — font size and transpose are remembered per song,
+  restored automatically on next open. Stored in IndexedDB.
+- **BPM tap tempo** — tap the Tap button in the control drawer to measure BPM.
+  Tap ↑ Use to set scroll speed from the measured BPM (speed = BPM × 0.5).
+- **Key auto-detect on import** — when saving a pasted/fetched song, the key is
+  automatically set from the first chord in the ChordPro content.
 
 ## Files
 
 ```
-index.html          — shell, all screens, editor panel markup
-style.css           — all styles including v0.2 and v0.3 additions
-data.js             — sample seed data
-db.js               — IndexedDB layer
-parser.js           — ChordPro parser, tab-style detector, format auto-detect
-viewer.js           — full-screen viewer, DOM pagination, autoscroll
-fetcher.js          — URL import, CORS proxy, per-site parsers (UG/Chordie/E-Chords)
-editor.js           — song edit slide-in panel
+index.html          — shell, all screens
+style.css           — all styles
+data.js             — 46 public domain songs, 6 setlists
+db.js               — IndexedDB layer with versioned migration
+parser.js           — ChordPro parser, ruby token model
+viewer.js           — full-screen viewer, pagination, autoscroll, voice, queue
+voice.js            — Web Speech API page turner with fuzzy lyric matching
+fetcher.js          — URL import, CORS proxy, site parsers
+editor.js           — song edit panel
 setlist-manager.js  — setlist CRUD and drag-reorder
+ocr.js              — Tesseract.js OCR with correction UI
 app.js              — navigation and wiring
-manifest.json       — PWA manifest
-sw.js               — service worker (cache-first app shell)
-icon-192.png        — PWA icon (placeholder — replace with real artwork)
-icon-512.png        — PWA icon (placeholder)
+manifest.json / sw.js — PWA
 ```
-
-## Open questions carried forward
-
-- UG import: proxy may still be blocked — browser extension fallback not yet implemented
-- OCR import (Tesseract.js) — v0.4
-- Voice scroll commands — v0.4
-- Setlist queue / auto-advance to next song — v0.4
