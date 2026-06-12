@@ -9,6 +9,7 @@
 <title>song-display</title>
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 <body>
 
@@ -199,13 +200,34 @@
 
       <div id="import-ocr" class="import-pane">
         <h3>Photo / OCR</h3>
-        <p>Upload a photo or screenshot.</p>
-        <div class="drop-zone">
+        <p>Upload a photo or screenshot of a chord sheet. Chord lines are auto-detected — correct before saving.</p>
+
+        <div class="drop-zone" id="ocr-drop">
           <div class="drop-icon">📷</div>
           Drop image here, or click to browse
-          <input type="file" class="file-input-overlay" accept="image/*">
+          <input type="file" id="ocr-file-input" accept="image/*" style="display:none">
         </div>
-        <p class="hint">OCR pipeline coming in v0.4 (Tesseract.js).</p>
+
+        <div id="ocr-status-bar" style="display:none;margin:10px 0">
+          <span id="ocr-status" style="font-size:12px;color:var(--sub)"></span>
+        </div>
+
+        <!-- Side-by-side correction UI -->
+        <div id="ocr-correction-panel" class="ocr-correction-panel" style="display:none">
+          <div class="ocr-image-pane">
+            <div class="ocr-pane-label">Source image</div>
+            <img id="ocr-image-preview" class="ocr-image-preview" alt="Source">
+          </div>
+          <div class="ocr-text-pane">
+            <div class="ocr-pane-label">Detected lines — <span style="color:var(--chord)">C</span> = chord, <span style="color:var(--sub)">L</span> = lyric. Click badge to toggle.</div>
+            <div id="ocr-line-list" class="ocr-line-list"></div>
+          </div>
+        </div>
+
+        <div id="ocr-actions" class="ocr-actions" style="display:none">
+          <button class="btn-primary" id="ocr-convert">Convert &amp; Preview</button>
+          <button class="btn-sm" id="ocr-reset">Start over</button>
+        </div>
       </div>
 
       <div id="import-manual" class="import-pane">
@@ -373,6 +395,7 @@
 <script src="fetcher.js"></script>
 <script src="editor.js"></script>
 <script src="setlist-manager.js"></script>
+<script src="ocr.js"></script>
 <script src="app.js"></script>
 <script>
   if ('serviceWorker' in navigator) {
