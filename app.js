@@ -298,23 +298,61 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // ── File upload ───────────────────────────────────────────
-  document.getElementById('file-drop').addEventListener('click', () => {
-    document.getElementById('file-input-hidden').click();
+  const fileDropEl  = document.getElementById('file-drop');
+  const fileInputEl = document.getElementById('file-input-hidden');
+
+  fileDropEl.addEventListener('click', () => fileInputEl.click());
+
+  // Drag-and-drop on the drop zone
+  fileDropEl.addEventListener('dragover', e => {
+    e.preventDefault();
+    fileDropEl.classList.add('drop-active');
   });
-  document.getElementById('file-input-hidden').addEventListener('change', async e => {
+  fileDropEl.addEventListener('dragleave', () => {
+    fileDropEl.classList.remove('drop-active');
+  });
+  fileDropEl.addEventListener('drop', async e => {
+    e.preventDefault();
+    fileDropEl.classList.remove('drop-active');
+    const file = e.dataTransfer.files[0];
+    if (file) await handleFileImport(file);
+  });
+
+  fileInputEl.addEventListener('change', async e => {
     const file = e.target.files[0];
-    if (!file) return;
-    const text = await file.text();
-    if (file.name.endsWith('.sbook')) {
+    if (file) await handleFileImport(file);
+    e.target.value = '';
+  });
+
+  async function handleFileImport(file) {
+    const name = file.name.toLowerCase();
+    // Read as text — .sbook is JSON, everything else is text
+    let text;
+    try {
+      text = await file.text();
+    } catch(err) {
+      showToast('Could not read file: ' + err.message, true);
+      return;
+    }
+
+    if (name.endsWith('.sbook')) {
+      // Validate it looks like JSON before parsing
+      const trimmed = text.trim();
+      if (!trimmed.startsWith('{')) {
+        showToast('Invalid .sbook file — expected JSON.', true);
+        return;
+      }
       try {
-        const result = await DB.importSbook(text, false);
+        const result = await DB.importSbook(trimmed, false);
         await loadSongs();
         await SetlistManager.load(allSongs);
-        showToast(`Imported ${result.imported} song(s). ${result.skipped} skipped.`);
+        showToast(`Imported ${result.imported} song(s). ${result.skipped} already existed.`);
+        showScreen('songs');
       } catch(err) {
         showToast('Import failed: ' + err.message, true);
       }
     } else {
+      // Treat as song text — feed into paste preview
       document.getElementById('paste-input').value = text;
       showScreen('import');
       document.querySelector('[data-method="paste"]').click();
@@ -323,17 +361,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         'preview-format', 'preview-render', 'preview-save'
       );
     }
-    e.target.value = '';
-  });
+  }
 
   // ── Export ────────────────────────────────────────────────
   document.getElementById('export-sbook').addEventListener('click', async () => {
     const json = await DB.exportSbook();
-    const blob = new Blob([json], { type: 'application/json' });
+    // Use text/plain so browsers don't mangle the download across all platforms
+    const blob = new Blob([json], { type: 'text/plain;charset=utf-8' });
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement('a');
     a.href = url; a.download = 'songs.sbook'; a.click();
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
 
   // ── Clear data ────────────────────────────────────────────
