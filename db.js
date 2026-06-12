@@ -1,4 +1,4 @@
-// db.js — IndexedDB persistence via native IDBDatabase (no lib dependency)
+// db.js — IndexedDB persistence layer
 
 const DB = (() => {
   const DB_NAME    = 'song-display';
@@ -9,7 +9,6 @@ const DB = (() => {
     return new Promise((resolve, reject) => {
       if (db) return resolve(db);
       const req = indexedDB.open(DB_NAME, DB_VERSION);
-
       req.onupgradeneeded = (e) => {
         const d = e.target.result;
         if (!d.objectStoreNames.contains('songs')) {
@@ -24,7 +23,6 @@ const DB = (() => {
           d.createObjectStore('settings', { keyPath: 'key' });
         }
       };
-
       req.onsuccess  = (e) => { db = e.target.result; resolve(db); };
       req.onerror    = (e) => reject(e.target.error);
     });
@@ -41,144 +39,116 @@ const DB = (() => {
     });
   }
 
-  // ── Songs ────────────────────────────────────────────────
+  // ── Songs ─────────────────────────────────────────────────
   async function getAllSongs() {
     await open();
     return wrap(tx('songs').getAll());
   }
-
   async function getSong(id) {
     await open();
     return wrap(tx('songs').get(id));
   }
-
   async function putSong(song) {
     await open();
     song.updatedAt = Date.now();
     if (!song.createdAt) song.createdAt = Date.now();
     return wrap(tx('songs', 'readwrite').put(song));
   }
-
   async function deleteSong(id) {
     await open();
     return wrap(tx('songs', 'readwrite').delete(id));
   }
 
-  // ── Setlists ─────────────────────────────────────────────
+  // ── Setlists ──────────────────────────────────────────────
   async function getAllSetlists() {
     await open();
     return wrap(tx('setlists').getAll());
   }
-
   async function putSetlist(sl) {
     await open();
     return wrap(tx('setlists', 'readwrite').put(sl));
   }
-
   async function deleteSetlist(id) {
     await open();
     return wrap(tx('setlists', 'readwrite').delete(id));
   }
 
-  // ── Settings ─────────────────────────────────────────────
+  // ── Settings ──────────────────────────────────────────────
   async function getSetting(key, fallback = null) {
     await open();
     const row = await wrap(tx('settings').get(key));
     return row ? row.value : fallback;
   }
-
   async function setSetting(key, value) {
     await open();
     return wrap(tx('settings', 'readwrite').put({ key, value }));
   }
 
-  // ── Data versioning & migration ───────────────────────────
-  // Bump DATA_VERSION whenever sample data changes or a migration is needed.
-  const DATA_VERSION = 5;  // v0.6: added German Christmas songs
+  // ── Migration ─────────────────────────────────────────────
+  // DATA_VERSION must be bumped whenever SONGS or SETLISTS change.
+  // Strategy: always sync every demo song and setlist that should exist,
+  // regardless of stored version. This makes migration idempotent and
+  // safe to re-run — existing user-added songs are never touched.
+  const DATA_VERSION = 6;  // v0.6: robust sync-based migration
 
   async function migrate() {
     await open();
     const stored = await getSetting('dataVersion', 0);
     if (stored >= DATA_VERSION) return;
 
-    // v1→v2: remove copyrighted sample songs from v0.1/v0.2
+    // Step 1: remove old copyrighted songs from v0.1/v0.2 (IDs '1'–'6')
     if (stored < 2) {
-      const copyrightedIds = ['1','2','3','4','5','6'];
-      for (const id of copyrightedIds) {
+      for (const id of ['1','2','3','4','5','6']) {
         const s = await getSong(id);
         if (s) await deleteSong(id);
       }
-      // Remove old demo setlists
-      const oldSlIds = ['sl1','sl2','sl3'];
-      for (const id of oldSlIds) {
-        try {
-          await wrap(tx('setlists', 'readwrite').delete(id));
-        } catch(_) {}
+      for (const id of ['sl1','sl2','sl3']) {
+        try { await wrap(tx('setlists','readwrite').delete(id)); } catch(_) {}
       }
     }
 
-    // v2→v3: reseed expanded songbook if only old 6 pd songs remain
-    if (stored < 3) {
-      const remaining = await getAllSongs();
-      const oldPdIds = new Set(['pd-001','pd-002','pd-003','pd-004','pd-005','pd-006']);
-      const isOnlyOldSeeds = remaining.length > 0 && remaining.every(s => oldPdIds.has(s.id));
-      if (remaining.length === 0 || isOnlyOldSeeds) {
-        for (const id of ['sl-demo-1','sl-demo-2']) {
-          try { await wrap(tx('setlists','readwrite').delete(id)); } catch(_) {}
-        }
-        for (const song of SONGS)    await putSong({ ...song });
-        for (const sl   of SETLISTS) await putSetlist({ ...sl });
+    // Step 2: sync ALL demo songs — add any that are missing, never overwrite
+    // user-edited songs (we check by ID only — if it exists, skip it)
+    for (const song of SONGS) {
+      const existing = await getSong(song.id);
+      if (!existing) {
+        await putSong({ ...song });
       }
     }
 
-    // v3→v4: add new German and Chinese songs to existing installs
-    if (stored < 4) {
-      const newIds = ['pd-031','pd-032','pd-033','pd-034','pd-035','pd-036','pd-037','pd-038',
-                      'pd-039','pd-040','pd-041','pd-042','pd-043','pd-044','pd-045','pd-046'];
-      for (const id of newIds) {
-        const existing = await getSong(id);
-        if (!existing) {
-          const song = SONGS.find(s => s.id === id);
-          if (song) await putSong({ ...song });
-        }
-      }
-      // Add new setlists
-      const newSlIds = ['sl-demo-5','sl-demo-6'];
-      for (const id of newSlIds) {
-        const sl = SETLISTS.find(s => s.id === id);
-        if (sl) await putSetlist({ ...sl });
+    // Step 3: sync ALL demo setlists — add any that are missing
+    const existingSetlists = await getAllSetlists();
+    const existingSlIds = new Set(existingSetlists.map(s => s.id));
+    for (const sl of SETLISTS) {
+      if (!existingSlIds.has(sl.id)) {
+        await putSetlist({ ...sl });
       }
     }
 
-    // v4→v5: add German Christmas songs
-    if (stored < 5) {
-      const newIds = ['pd-047','pd-048','pd-049','pd-050','pd-051','pd-052',
-                      'pd-053','pd-054','pd-055','pd-056','pd-057'];
-      for (const id of newIds) {
-        const existing = await getSong(id);
-        if (!existing) {
-          const song = SONGS.find(s => s.id === id);
-          if (song) await putSong({ ...song });
-        }
+    // Step 4: remove old demo setlists that no longer exist in SETLISTS
+    // (only remove known old IDs, never touch user-created ones)
+    const currentSlIds = new Set(SETLISTS.map(s => s.id));
+    const oldDemoIds = ['sl-demo-1','sl-demo-2','sl-demo-3','sl-demo-4',
+                        'sl-demo-5','sl-demo-6','sl-demo-7'];
+    for (const id of oldDemoIds) {
+      if (!currentSlIds.has(id) && existingSlIds.has(id)) {
+        await deleteSetlist(id);
       }
-      const xmasSl = SETLISTS.find(s => s.id === 'sl-demo-7');
-      if (xmasSl) await putSetlist({ ...xmasSl });
     }
 
     await setSetting('dataVersion', DATA_VERSION);
   }
 
-  // Keep seedIfEmpty as alias for backwards compat with any cached app.js
+  // Alias for backwards compat
   async function seedIfEmpty() { return migrate(); }
 
-  // ── Export all as .sbook JSON ─────────────────────────────
+  // ── Export / Import ───────────────────────────────────────
   async function exportSbook() {
     const songs    = await getAllSongs();
     const setlists = await getAllSetlists();
     return JSON.stringify({ version: 1, songs, setlists }, null, 2);
   }
 
-  // ── Import .sbook (merge, no overwrite by default) ────────
   async function importSbook(json, overwrite = false) {
     const data = JSON.parse(json);
     const existing = await getAllSongs();
