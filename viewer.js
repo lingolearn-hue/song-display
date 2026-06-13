@@ -437,8 +437,13 @@ const Viewer = (() => {
       if (scrolling) return;
       // Ignore touches in the top bar
       if (swipeY < TOPBAR_H) return;
-      // Ignore touches on the drawer
-      if (drawerOpen) { closeDrawer(); return; }
+      // If drawer is open, only close if touch was OUTSIDE the drawer
+      if (drawerOpen) {
+        const drawer = document.getElementById('control-drawer');
+        if (drawer && drawer.contains(e.target)) return; // touch inside drawer — ignore
+        closeDrawer();
+        return;
+      }
 
       const dx = e.changedTouches[0].clientX - swipeX;
       const dy = e.changedTouches[0].clientY - swipeY;
@@ -468,8 +473,8 @@ const Viewer = (() => {
 
     $('font-up').addEventListener('click',        () => { fontSize = Math.min(28, fontSize+1); saveMemory(); rerender(); });
     $('font-down').addEventListener('click',      () => { fontSize = Math.max(11, fontSize-1); saveMemory(); rerender(); });
-    $('transpose-up').addEventListener('click',   () => { transpose = Math.min(6,  transpose+1); saveMemory(); rerender(); });
-    $('transpose-down').addEventListener('click', () => { transpose = Math.max(-6, transpose-1); saveMemory(); rerender(); });
+    $('transpose-up').addEventListener('click',   () => { transpose = transpose + 1; saveMemory(); rerender(); });
+    $('transpose-down').addEventListener('click', () => { transpose = transpose - 1; saveMemory(); rerender(); });
     $('capo-up').addEventListener('click',        () => { capo = Math.min(9, capo+1); el.capoVal().textContent = capo; });
     $('capo-down').addEventListener('click',      () => { capo = Math.max(0, capo-1); el.capoVal().textContent = capo; });
     $('scroll-toggle').addEventListener('click',  () => scrolling ? stopScroll() : startScroll());
