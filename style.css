@@ -173,15 +173,6 @@ body.viewing #screen-viewer { display: flex; }
   flex-direction: column;
 }
 
-/* Tap zones */
-.tap-zone {
-  position: absolute;
-  top: 0; bottom: 80px; /* leave bottom for menu tap */
-  z-index: 20;
-  cursor: pointer;
-}
-.tap-prev { left: 0; width: 30%; }
-.tap-next { right: 0; width: 55%; }
 
 /* The actual song page */
 .viewer-content {
@@ -275,20 +266,18 @@ body.viewing #screen-viewer { display: flex; }
 
 /* Back button */
 .viewer-back {
-  position: absolute;
-  top: 14px;
-  left: 16px;
   background: none;
   border: none;
   color: var(--sub);
-  font-size: 13px;
+  font-size: 16px;
   cursor: pointer;
-  z-index: 30;
-  padding: 4px 8px;
+  padding: 4px 10px;
   border-radius: var(--radius);
-  transition: color .15s, background .15s;
+  flex-shrink: 0;
+  transition: color .15s;
+  white-space: nowrap;
 }
-.viewer-back:hover { color: var(--text); background: var(--surface); }
+.viewer-back:hover { color: var(--text); }
 
 /* Title overlay — fades in then out */
 .viewer-title-overlay {
@@ -776,18 +765,15 @@ body.scrolling .page-indicator { opacity: 0; }
 
 /* ── Text tabs in viewer ── */
 .viewer-text-tabs {
-  position: absolute;
-  top: 0;
-  left: 48px;          /* clear back button */
-  right: 0;
-  height: 38px;
-  z-index: 30;
+  flex: 1;
   display: flex;
-  align-items: flex-end;
-  padding: 0 12px;
+  align-items: center;
   gap: 2px;
-  background: linear-gradient(to bottom, var(--bg) 70%, transparent);
+  overflow-x: auto;
+  scrollbar-width: none;
+  min-width: 0;
 }
+.viewer-text-tabs::-webkit-scrollbar { display: none; }
 
 .text-tab {
   height: 30px;
@@ -804,12 +790,8 @@ body.scrolling .page-indicator { opacity: 0; }
 .text-tab:hover  { color: var(--text); }
 .text-tab.active { color: var(--chord); border-bottom-color: var(--chord); }
 
-/* Push viewer-content down when tabs are visible */
 .viewer-screen .viewer-content {
-  top: 0;
-}
-body.has-text-tabs .viewer-screen .viewer-content {
-  top: 38px;
+  top: 44px; /* below viewer-top-bar */
 }
 
 /* ── Import preview ── */
@@ -1403,21 +1385,18 @@ body.voice-active .voice-status { opacity: 1; }
 
 /* ── Display options button (replaces viewer-edit + tap-menu) ── */
 .display-options-btn {
-  position: absolute;
-  top: 14px;
-  right: 16px;
-  background: var(--surface);
+  flex-shrink: 0;
+  background: none;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   color: var(--sub);
-  font-size: 12px;
+  font-size: 16px;
   padding: 4px 10px;
   cursor: pointer;
-  z-index: 30;
-  transition: color .15s, border-color .15s, background .15s;
+  transition: color .15s, border-color .15s;
+  white-space: nowrap;
 }
-.display-options-btn:hover,
-.display-options-btn:active { color: var(--chord); border-color: var(--chord); }
+.display-options-btn:hover { color: var(--chord); border-color: var(--chord); }
 
 /* Remove old viewer-edit styles if any remain */
 .viewer-edit { display: none; }
@@ -1483,3 +1462,63 @@ body.voice-active .voice-status { opacity: 1; }
   80%  { opacity: .6; transform: translateX(-8px); }
   100% { opacity: 0; transform: translateX(0); }
 }
+
+/* ══════════════════════════════════════════════
+   v0.9 additions
+══════════════════════════════════════════════ */
+
+/* ── Viewer top bar ── */
+.viewer-top-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  gap: 4px;
+  background: linear-gradient(to bottom, var(--bg) 65%, transparent);
+  z-index: 30;
+}
+
+/* ── Filter row — native selects ── */
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.filter-select {
+  height: 28px;
+  padding: 0 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 13px;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  outline: none;
+  min-width: 110px;
+}
+.filter-select:focus { border-color: var(--chord); }
+.filter-select option { background: var(--surface); color: var(--text); }
+
+.filter-clear-btn {
+  height: 28px;
+  padding: 0 10px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--danger);
+  font-size: 12px;
+  cursor: pointer;
+  font-family: var(--font-ui);
+}
+.filter-clear-btn.hidden { display: none; }
+.filter-clear-btn:hover { background: rgba(224,96,96,.08); }
+
+/* ── Block double-tap zoom ── */
+html { touch-action: manipulation; }
