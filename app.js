@@ -109,7 +109,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   navTabs.forEach(tab => tab.addEventListener('click', () => showScreen(tab.dataset.screen)));
   document.querySelector('.nav-cta').addEventListener('click', () => showScreen('import'));
-  document.getElementById('viewer-back').addEventListener('click', () => showScreen('songs'));
+  document.getElementById('viewer-back').addEventListener('click', () => {
+    Viewer.releaseWakeLock();
+    showScreen('songs');
+  });
   // Edit song now lives in display options drawer
   document.getElementById('drawer-edit-song').addEventListener('click', () => {
     if (currentViewerSong) {
