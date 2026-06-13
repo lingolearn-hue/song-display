@@ -52,10 +52,8 @@
     </div>
     <div id="filter-row" class="filter-row">
       <select id="lang-filter" class="filter-select" multiple size="1">
-        <option value="" disabled>🌐 Language</option>
       </select>
       <select id="tag-filter" class="filter-select" multiple size="1">
-        <option value="" disabled>🏷 Type</option>
       </select>
       <button class="filter-clear-btn hidden" id="filter-clear">✕</button>
     </div>
@@ -468,12 +466,15 @@
   }, { passive: false });
 </script>
 <script>
-  // Block double-tap zoom
-  let _lastTap = 0;
-  document.addEventListener('touchend', e => {
+  // Block double-tap zoom robustly
+  // Method 1: touchstart preventDefault on rapid taps (most reliable on iOS)
+  let _lastTapStart = 0;
+  document.addEventListener('touchstart', e => {
     const now = Date.now();
-    if (now - _lastTap < 300) e.preventDefault();
-    _lastTap = now;
+    if (now - _lastTapStart < 300) {
+      e.preventDefault();
+    }
+    _lastTapStart = now;
   }, { passive: false });
 </script>
 <script src="voice.js"></script>
