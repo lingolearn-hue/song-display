@@ -414,26 +414,48 @@ const Viewer = (() => {
     const dispBtn = $('display-options-btn');
     if (dispBtn) dispBtn.addEventListener('click', toggleDrawer);
 
-    // ── Swipe on full viewer screen to flip pages ────────────
+    // ── Swipe + tap on full viewer screen to flip pages ────────
     const viewerScreen = document.getElementById('screen-viewer');
+    const TOPBAR_H = 44; // px — ignore touches in the top bar area
     let swipeX = 0, swipeY = 0, swipeT = 0, didMove = false;
+
     viewerScreen.addEventListener('touchstart', e => {
       swipeX = e.touches[0].clientX;
       swipeY = e.touches[0].clientY;
       swipeT = Date.now();
       didMove = false;
     }, { passive: true });
-    viewerScreen.addEventListener('touchmove', () => { didMove = true; }, { passive: true });
+
+    viewerScreen.addEventListener('touchmove', e => {
+      // Only count as moved if finger travelled > 8px (filters micro-jitter)
+      const dx = Math.abs(e.touches[0].clientX - swipeX);
+      const dy = Math.abs(e.touches[0].clientY - swipeY);
+      if (dx > 8 || dy > 8) didMove = true;
+    }, { passive: true });
+
     viewerScreen.addEventListener('touchend', e => {
-      if (!didMove || scrolling) return;
+      if (scrolling) return;
+      // Ignore touches in the top bar
+      if (swipeY < TOPBAR_H) return;
+      // Ignore touches on the drawer
+      if (drawerOpen) { closeDrawer(); return; }
+
       const dx = e.changedTouches[0].clientX - swipeX;
       const dy = e.changedTouches[0].clientY - swipeY;
       const dt = Date.now() - swipeT;
-      if (dt > 500) return;
-      if (Math.abs(dy) > Math.abs(dx)) return;
-      if (Math.abs(dx) < 40) return;
-      if (drawerOpen) { closeDrawer(); return; }
-      dx < 0 ? nextPage() : prevPage();
+
+      if (didMove) {
+        // ── Swipe ──
+        if (dt > 500) return;
+        if (Math.abs(dy) > Math.abs(dx)) return; // too vertical
+        if (Math.abs(dx) < 40) return;           // too short
+        dx < 0 ? nextPage() : prevPage();
+      } else {
+        // ── Tap ──
+        if (dt > 400) return; // held too long
+        const W = viewerScreen.clientWidth;
+        swipeX < W * 0.35 ? prevPage() : nextPage();
+      }
     }, { passive: true });
 
 
