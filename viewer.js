@@ -216,7 +216,8 @@ const Viewer = (() => {
   function buildTextTabs() {
     const tabBar = el.textTabs();
     tabBar.innerHTML = '';
-    if (!song || song.texts.length <= 1) { tabBar.innerHTML = ''; return; }
+    if (!song || song.texts.length <= 1) { tabBar.style.display = 'none'; return; }
+    tabBar.style.display = 'flex';
     song.texts.forEach((text, i) => {
       const btn = document.createElement('button');
       btn.className = 'text-tab' + (i === activeTextIdx ? ' active' : '');
@@ -409,33 +410,36 @@ const Viewer = (() => {
 
   // ── Init ──────────────────────────────────────────────────
   function init() {
-    // Tap zones removed — navigation is swipe-only + keyboard
+    $('tap-next').addEventListener('click', () => {
+      if (drawerOpen) { closeDrawer(); return; }
+      if (!scrolling) nextPage();
+    });
+    $('tap-prev').addEventListener('click', () => {
+      if (drawerOpen) { closeDrawer(); return; }
+      if (!scrolling) prevPage();
+    });
     // Display options button (replaces tap-menu and edit button)
     const dispBtn = $('display-options-btn');
     if (dispBtn) dispBtn.addEventListener('click', toggleDrawer);
 
-    // ── Swipe to flip pages ─────────────────────────────────
-    // Attach to full viewer screen so no element intercepts the touch
-    let swipeStartX = 0, swipeStartY = 0, swipeStartT = 0, swipeMoved = false;
-    const viewerEl = el.viewerScreen() || document.getElementById('screen-viewer');
-    viewerEl.addEventListener('touchstart', e => {
+    // ── Swipe to flip pages ──────────────────────────────────
+    let swipeStartX = 0;
+    let swipeStartY = 0;
+    let swipeStartT = 0;
+    el.viewerContent().addEventListener('touchstart', e => {
       swipeStartX = e.touches[0].clientX;
       swipeStartY = e.touches[0].clientY;
       swipeStartT = Date.now();
-      swipeMoved  = false;
     }, { passive: true });
-    viewerEl.addEventListener('touchmove', e => {
-      swipeMoved = true;
-    }, { passive: true });
-    viewerEl.addEventListener('touchend', e => {
+    el.viewerContent().addEventListener('touchend', e => {
       if (scrolling) return;
-      if (!swipeMoved) return;  // pure tap, not swipe
       const dx = e.changedTouches[0].clientX - swipeStartX;
       const dy = e.changedTouches[0].clientY - swipeStartY;
       const dt = Date.now() - swipeStartT;
-      if (dt > 500) return;                          // too slow
-      if (Math.abs(dy) > Math.abs(dx) * 0.8) return; // too vertical
-      if (Math.abs(dx) < 40) return;                 // too short
+      // Must be fast enough, mostly horizontal, and > 50px
+      if (dt > 600) return;
+      if (Math.abs(dy) > Math.abs(dx)) return;
+      if (Math.abs(dx) < 50) return;
       if (drawerOpen) { closeDrawer(); return; }
       if (dx < 0) nextPage(); else prevPage();
     }, { passive: true });
