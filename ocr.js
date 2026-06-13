@@ -11,8 +11,22 @@ const OCR = (() => {
 
   const $ = id => document.getElementById(id);
 
+  // ── Lazy-load Tesseract on first use ────────────────────
+  function loadTesseract() {
+    if (window.Tesseract) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+      s.onload  = resolve;
+      s.onerror = () => reject(new Error('Could not load Tesseract.js — check your connection'));
+      document.head.appendChild(s);
+    });
+  }
+
   // ── Run OCR on an image file ──────────────────────────────
   async function recognise(file) {
+    setStatus('Loading OCR engine…', 0);
+    await loadTesseract();
     setStatus('Initialising OCR engine…', 0);
 
     const result = await Tesseract.recognize(file, 'eng', {
