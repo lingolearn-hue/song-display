@@ -5,6 +5,11 @@ const Viewer = (() => {
   // ── State ─────────────────────────────────────────────────
   let song          = null;
   let activeTextIdx = 0;
+
+  // ── Wake lock (prevent screen sleep during performance) ──
+  let wakeLock      = null;
+  let wakeTimer     = null;
+  const WAKE_MS     = 10 * 60 * 1000; // 10 minutes
   let pages         = [];
   let currentPage   = 0;
   let fontSize      = 12;
@@ -151,6 +156,7 @@ const Viewer = (() => {
   }
 
   function nextPage() {
+    touchActivity();
     if (currentPage < pages.length - 1) {
       flash('right'); showPage(currentPage + 1);
     } else if (queueIdx !== -1 && queueIdx < queue.length - 1) {
@@ -158,6 +164,7 @@ const Viewer = (() => {
     }
   }
   function prevPage() {
+    touchActivity();
     if (currentPage > 0) { flash('left'); showPage(currentPage - 1); }
   }
 
@@ -330,6 +337,30 @@ const Viewer = (() => {
     setTimeout(() => ov.classList.remove('visible'), 2400);
   }
 
+  // ── Wake lock helpers ────────────────────────────────────
+  async function acquireWakeLock() {
+    if (!('wakeLock' in navigator)) return;
+    try {
+      // Release existing lock first
+      if (wakeLock) { await wakeLock.release(); wakeLock = null; }
+      wakeLock = await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release', () => { wakeLock = null; });
+    } catch (_) { /* API unavailable or permission denied — silent */ }
+  }
+
+  function releaseWakeLock() {
+    clearTimeout(wakeTimer);
+    wakeTimer = null;
+    if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
+  }
+
+  // Call on any user activity in the viewer — resets the 10-min timer
+  function touchActivity() {
+    acquireWakeLock();
+    clearTimeout(wakeTimer);
+    wakeTimer = setTimeout(releaseWakeLock, WAKE_MS);
+  }
+
   // ── Open a song ───────────────────────────────────────────
   function openSong(songData) {
     // Save memory for previous song
@@ -349,6 +380,7 @@ const Viewer = (() => {
     rerender();
     showTitleOverlay();
     updateNextSongBar();
+    touchActivity();     // acquire wake lock, reset timer
   }
 
   // ── Voice ─────────────────────────────────────────────────
@@ -518,6 +550,16 @@ const Viewer = (() => {
 
     DB.getSetting('fontSize',  12).then(v => { fontSize = v; syncDrawer(); });
 
+    // Re-acquire wake lock if page becomes visible again while in viewer
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && song && wakeTimer) {
+        acquireWakeLock();
+      } else if (document.visibilityState === 'hidden') {
+        // Release on hide — OS will have released it anyway
+        if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
+      }
+    });
+
     // Listen for BPM-derived scroll speed from app.js
     document.addEventListener('set-scroll-speed', e => {
       scrollSpeed = e.detail;
@@ -526,5 +568,5 @@ const Viewer = (() => {
     loadMemory();
   }
 
-  return { init, open };
+  return { init, open, releaseWakeLock };
 })();
