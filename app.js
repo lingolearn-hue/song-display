@@ -147,12 +147,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     return song.texts && song.texts[0] ? (song.texts[0].language || 'en') : 'en';
   }
 
-  // Active filters
-  let activeLangs = new Set();
-  let activeTags  = new Set();
+  function tagEmoji(tag) {
+    const map = { christmas:'🎄', folk:'🪕', hymn:'⛪', anthem:'🏛️',
+                  lullaby:'🌙', spiritual:'✝️', classical:'🎼', traditional:'🎵' };
+    return map[tag] || '🏷';
+  }
 
+  // ── Native <select multiple> filters ─────────────────────
   function buildFilterRow() {
-    // Collect all languages and tags across songs
     const langs = new Set();
     const tags  = new Set();
     allSongs.forEach(s => {
@@ -160,77 +162,73 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (s.tags)  s.tags.forEach(t => tags.add(t));
     });
 
-    // Language chips
-    const langEl = document.getElementById('lang-filters');
-    langEl.innerHTML = '';
-    // "All" chip
-    const allChip = makeChip('All', '', activeLangs.size === 0, () => {
-      activeLangs.clear();
-      buildFilterRow();
-      renderSongList(searchEl.value);
-    });
-    langEl.appendChild(allChip);
-
+    // Populate language select
+    const langSel = document.getElementById('lang-filter');
+    const prevLangs = [...langSel.options].filter(o => o.selected).map(o => o.value);
+    langSel.innerHTML = '';
     [...langs].sort().forEach(lang => {
-      const flag = LANG_FLAG[lang] || '🌐';
-      const name = LANG_NAME[lang] || lang;
-      const chip = makeChip(flag, name, activeLangs.has(lang), () => {
-        if (activeLangs.has(lang)) activeLangs.delete(lang);
-        else activeLangs.add(lang);
-        buildFilterRow();
-        renderSongList(searchEl.value);
-      });
-      langEl.appendChild(chip);
+      const opt = document.createElement('option');
+      opt.value = lang;
+      opt.textContent = (LANG_FLAG[lang] || '🌐') + ' ' + (LANG_NAME[lang] || lang);
+      opt.selected = prevLangs.includes(lang);
+      langSel.appendChild(opt);
     });
 
-    // Tag chips
-    const tagEl = document.getElementById('tag-filters');
-    tagEl.innerHTML = '';
-    if (tags.size === 0) {
-      tagEl.style.display = 'none';
-      document.querySelector('.filter-divider').style.display = 'none';
-    } else {
-      tagEl.style.display = 'flex';
-      document.querySelector('.filter-divider').style.display = 'block';
-      [...tags].sort().forEach(tag => {
-        const chip = makeChip(tagEmoji(tag) + ' ' + tag, '', activeTags.has(tag), () => {
-          if (activeTags.has(tag)) activeTags.delete(tag);
-          else activeTags.add(tag);
-          buildFilterRow();
-          renderSongList(searchEl.value);
-        });
-        tagEl.appendChild(chip);
-      });
-    }
+    // Populate tag select
+    const tagSel = document.getElementById('tag-filter');
+    const prevTags = [...tagSel.options].filter(o => o.selected).map(o => o.value);
+    tagSel.innerHTML = '';
+    [...tags].sort().forEach(tag => {
+      const opt = document.createElement('option');
+      opt.value = tag;
+      opt.textContent = tagEmoji(tag) + ' ' + tag;
+      opt.selected = prevTags.includes(tag);
+      tagSel.appendChild(opt);
+    });
+
+    updateClearBtn();
   }
 
-  function makeChip(label, title, active, onClick) {
-    const btn = document.createElement('button');
-    btn.className = 'filter-chip' + (active ? ' active' : '');
-    btn.textContent = label;
-    if (title) btn.title = title;
-    btn.addEventListener('click', onClick);
-    return btn;
+  function getSelectedFilters() {
+    const langSel = document.getElementById('lang-filter');
+    const tagSel  = document.getElementById('tag-filter');
+    const langs = new Set([...langSel.options].filter(o => o.selected).map(o => o.value));
+    const tags  = new Set([...tagSel.options].filter(o => o.selected).map(o => o.value));
+    return { langs, tags };
   }
 
-  function tagEmoji(tag) {
-    const map = { christmas:'🎄', folk:'🪕', hymn:'⛪', anthem:'🏛️',
-                  lullaby:'🌙', spiritual:'✝️', classical:'🎼', traditional:'🎵' };
-    return map[tag] || '🏷️';
+  function updateClearBtn() {
+    const { langs, tags } = getSelectedFilters();
+    const btn = document.getElementById('filter-clear');
+    if (btn) btn.classList.toggle('hidden', langs.size === 0 && tags.size === 0);
   }
 
   function songMatchesFilters(song) {
-    // Language filter: song must have at least one text in an active language
-    if (activeLangs.size > 0) {
+    const { langs, tags } = getSelectedFilters();
+    if (langs.size > 0) {
       const songLangs = new Set((song.texts || []).map(t => t.language));
-      if (![...activeLangs].some(l => songLangs.has(l))) return false;
+      if (![...langs].some(l => songLangs.has(l))) return false;
     }
-    // Tag filter: song must have all active tags
-    if (activeTags.size > 0) {
+    if (tags.size > 0) {
       const songTags = new Set(song.tags || []);
-      if (![...activeTags].every(t => songTags.has(t))) return false;
+      if (![...tags].every(t => songTags.has(t))) return false;
     }
     return true;
+  }
+
+  // Wire filter change events once
+  function initFilters() {
+    document.getElementById('lang-filter').addEventListener('change', () => {
+      updateClearBtn(); renderSongList(searchEl.value);
+    });
+    document.getElementById('tag-filter').addEventListener('change', () => {
+      updateClearBtn(); renderSongList(searchEl.value);
+    });
+    document.getElementById('filter-clear').addEventListener('click', () => {
+      [...document.getElementById('lang-filter').options].forEach(o => o.selected = false);
+      [...document.getElementById('tag-filter').options].forEach(o => o.selected = false);
+      updateClearBtn(); renderSongList(searchEl.value);
+    });
   }
 
   function renderSongList(filter = '') {
@@ -272,6 +270,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   searchEl.addEventListener('input', () => renderSongList(searchEl.value));
   await loadSongs();
   buildFilterRow();
+  initFilters();
 
   function openSong(song, queueData, queueIdx) {
     currentViewerSong = song;
