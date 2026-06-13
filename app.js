@@ -223,8 +223,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   function songMatchesFilters(song) {
     const { langs, tags } = getSelectedFilters();
     if (langs.size > 0) {
+      // AND logic: song must have a text in EACH of the selected languages
       const songLangs = new Set((song.texts || []).map(t => t.language));
-      if (![...langs].some(l => songLangs.has(l))) return false;
+      if (![...langs].every(l => songLangs.has(l))) return false;
     }
     if (tags.size > 0) {
       const songTags = new Set(song.tags || []);
