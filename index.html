@@ -30,6 +30,7 @@
   /* Block pinch/double-tap zoom globally */
   html { touch-action: manipulation; }
 </style>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 <body>
 
@@ -50,19 +51,9 @@
       <input type="text" id="song-search" placeholder="Search songs…" autocomplete="off">
     </div>
     <div id="filter-row" class="filter-row">
-      <div class="filter-dropdown-wrap">
-        <button class="filter-dropdown-btn" id="lang-dropdown-btn">
-          🌐 Language <span class="filter-count" id="lang-count"></span>▾
-        </button>
-        <div class="filter-dropdown-menu hidden" id="lang-dropdown-menu"></div>
-      </div>
-      <div class="filter-dropdown-wrap">
-        <button class="filter-dropdown-btn" id="tag-dropdown-btn">
-          🏷 Type <span class="filter-count" id="tag-count"></span>▾
-        </button>
-        <div class="filter-dropdown-menu hidden" id="tag-dropdown-menu"></div>
-      </div>
-      <button class="filter-clear-btn hidden" id="filter-clear">✕ Clear</button>
+      <div id="lang-filters" class="filter-chips"></div>
+      <div class="filter-divider"></div>
+      <div id="tag-filters" class="filter-chips"></div>
     </div>
     <div id="song-list" class="song-list-items"></div>
   </div>
@@ -70,13 +61,10 @@
 
 <!-- ═══ VIEWER ═══ -->
 <div id="screen-viewer" class="screen viewer-screen">
+  <div id="tap-prev"  class="tap-zone tap-prev"></div>
+  <div id="tap-next"  class="tap-zone tap-next"></div>
 
-  <!-- Unified top bar: back | language tabs | options -->
-  <div id="viewer-top-bar" class="viewer-top-bar">
-    <button id="viewer-back" class="viewer-back-btn">← Songs</button>
-    <div id="viewer-text-tabs" class="viewer-text-tabs"></div>
-    <button id="display-options-btn" class="display-options-btn">⚙</button>
-  </div>
+  <div id="viewer-text-tabs" class="viewer-text-tabs" style="display:none"></div>
 
   <div id="viewer-content" class="viewer-content">
     <div id="viewer-page" class="viewer-page"></div>
@@ -85,6 +73,9 @@
   <div id="page-indicator" class="page-indicator">
     <span id="page-current">1</span> / <span id="page-total">1</span>
   </div>
+
+  <button id="viewer-back" class="viewer-back">← Songs</button>
+  <button id="display-options-btn" class="display-options-btn">⚙ Options</button>
 
   <div id="viewer-title-overlay" class="viewer-title-overlay">
     <span id="overlay-title"></span>
