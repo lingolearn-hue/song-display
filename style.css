@@ -776,17 +776,8 @@ body.scrolling .page-indicator { opacity: 0; }
 
 /* ── Text tabs in viewer ── */
 .viewer-text-tabs {
-  position: absolute;
-  top: 0;
-  left: 48px;          /* clear back button */
-  right: 0;
-  height: 38px;
-  z-index: 30;
+  /* styled via .viewer-top-bar .viewer-text-tabs */
   display: flex;
-  align-items: flex-end;
-  padding: 0 12px;
-  gap: 2px;
-  background: linear-gradient(to bottom, var(--bg) 70%, transparent);
 }
 
 .text-tab {
@@ -804,13 +795,7 @@ body.scrolling .page-indicator { opacity: 0; }
 .text-tab:hover  { color: var(--text); }
 .text-tab.active { color: var(--chord); border-bottom-color: var(--chord); }
 
-/* Push viewer-content down when tabs are visible */
-.viewer-screen .viewer-content {
-  top: 0;
-}
-body.has-text-tabs .viewer-screen .viewer-content {
-  top: 38px;
-}
+/* viewer-content top set by .viewer-screen .viewer-content rule below */
 
 /* ── Import preview ── */
 .import-preview {
@@ -1422,53 +1407,6 @@ body.voice-active .voice-status { opacity: 1; }
 /* Remove old viewer-edit styles if any remain */
 .viewer-edit { display: none; }
 
-/* ── Filter row ── */
-.filter-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 10px;
-  border-bottom: 1px solid var(--border);
-  overflow-x: auto;
-  flex-shrink: 0;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-}
-.filter-row::-webkit-scrollbar { display: none; }
-
-.filter-chips {
-  display: flex;
-  gap: 5px;
-  flex-shrink: 0;
-}
-
-.filter-divider {
-  width: 1px;
-  height: 20px;
-  background: var(--border);
-  flex-shrink: 0;
-}
-
-.filter-chip {
-  height: 26px;
-  padding: 0 10px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  color: var(--sub);
-  font-size: 13px;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: all .15s;
-  font-family: var(--font-ui);
-}
-.filter-chip:hover { border-color: var(--muted); color: var(--text); }
-.filter-chip.active {
-  background: var(--chord-bg);
-  border-color: var(--chord);
-  color: var(--chord);
-}
-
 /* ── Song item flag ── */
 .song-item-flag {
   font-size: 16px;
@@ -1566,20 +1504,14 @@ body.voice-active .voice-status { opacity: 1; }
 .viewer-top-bar .display-options-btn:hover { color: var(--chord); border-color: var(--chord); }
 
 /* Push content below top bar */
-.viewer-content { top: 42px !important; }
+.viewer-screen .viewer-content { top: 42px; }
 .viewer-page { padding: 16px 28px 80px; }
 
 /* Override old absolute positioning */
 .viewer-back { display: none; }
 .viewer-edit  { display: none; }
 
-/* Old viewer-text-tabs position reset (now inside top bar) */
-.viewer-text-tabs {
-  position: static;
-  background: none;
-  height: auto;
-  left: auto; right: auto; top: auto;
-}
+/* viewer-text-tabs reset — handled above */
 
 /* ── Filter dropdowns ── */
 .filter-row {
