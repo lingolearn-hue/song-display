@@ -216,8 +216,8 @@ const Viewer = (() => {
   function buildTextTabs() {
     const tabBar = el.textTabs();
     tabBar.innerHTML = '';
-    if (!song || song.texts.length <= 1) { tabBar.style.display = 'none'; return; }
-    tabBar.style.display = 'flex';
+    tabBar.innerHTML = '';
+    if (!song || song.texts.length <= 1) return;
     song.texts.forEach((text, i) => {
       const btn = document.createElement('button');
       btn.className = 'text-tab' + (i === activeTextIdx ? ' active' : '');
@@ -410,39 +410,32 @@ const Viewer = (() => {
 
   // ── Init ──────────────────────────────────────────────────
   function init() {
-    $('tap-next').addEventListener('click', () => {
-      if (drawerOpen) { closeDrawer(); return; }
-      if (!scrolling) nextPage();
-    });
-    $('tap-prev').addEventListener('click', () => {
-      if (drawerOpen) { closeDrawer(); return; }
-      if (!scrolling) prevPage();
-    });
-    // Display options button (replaces tap-menu and edit button)
+    // Display options button
     const dispBtn = $('display-options-btn');
     if (dispBtn) dispBtn.addEventListener('click', toggleDrawer);
 
-    // ── Swipe to flip pages ──────────────────────────────────
-    let swipeStartX = 0;
-    let swipeStartY = 0;
-    let swipeStartT = 0;
-    el.viewerContent().addEventListener('touchstart', e => {
-      swipeStartX = e.touches[0].clientX;
-      swipeStartY = e.touches[0].clientY;
-      swipeStartT = Date.now();
+    // ── Swipe on full viewer screen to flip pages ────────────
+    const viewerScreen = document.getElementById('screen-viewer');
+    let swipeX = 0, swipeY = 0, swipeT = 0, didMove = false;
+    viewerScreen.addEventListener('touchstart', e => {
+      swipeX = e.touches[0].clientX;
+      swipeY = e.touches[0].clientY;
+      swipeT = Date.now();
+      didMove = false;
     }, { passive: true });
-    el.viewerContent().addEventListener('touchend', e => {
-      if (scrolling) return;
-      const dx = e.changedTouches[0].clientX - swipeStartX;
-      const dy = e.changedTouches[0].clientY - swipeStartY;
-      const dt = Date.now() - swipeStartT;
-      // Must be fast enough, mostly horizontal, and > 50px
-      if (dt > 600) return;
+    viewerScreen.addEventListener('touchmove', () => { didMove = true; }, { passive: true });
+    viewerScreen.addEventListener('touchend', e => {
+      if (!didMove || scrolling) return;
+      const dx = e.changedTouches[0].clientX - swipeX;
+      const dy = e.changedTouches[0].clientY - swipeY;
+      const dt = Date.now() - swipeT;
+      if (dt > 500) return;
       if (Math.abs(dy) > Math.abs(dx)) return;
-      if (Math.abs(dx) < 50) return;
+      if (Math.abs(dx) < 40) return;
       if (drawerOpen) { closeDrawer(); return; }
-      if (dx < 0) nextPage(); else prevPage();
+      dx < 0 ? nextPage() : prevPage();
     }, { passive: true });
+
 
     document.addEventListener('keydown', e => {
       if (!document.body.classList.contains('viewing')) return;
