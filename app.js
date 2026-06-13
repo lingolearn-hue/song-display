@@ -153,6 +153,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     return map[tag] || '🏷';
   }
 
+  // Show placeholder text in select when nothing is selected
+  function updateSelectPlaceholder(sel, placeholder) {
+    const hasSelection = [...sel.options].some(o => o.selected);
+    if (!hasSelection) {
+      // Insert placeholder as first non-selectable option
+      const ph = document.createElement('option');
+      ph.value = '';
+      ph.disabled = true;
+      ph.selected = true;
+      ph.textContent = placeholder;
+      ph.style.color = 'var(--sub)';
+      sel.insertBefore(ph, sel.firstChild);
+    }
+  }
+
   // ── Native <select multiple> filters ─────────────────────
   function buildFilterRow() {
     const langs = new Set();
@@ -164,7 +179,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Populate language select
     const langSel = document.getElementById('lang-filter');
-    const prevLangs = [...langSel.options].filter(o => o.selected).map(o => o.value);
+    const prevLangs = [...langSel.options].filter(o => o.selected && o.value).map(o => o.value);
     langSel.innerHTML = '';
     [...langs].sort().forEach(lang => {
       const opt = document.createElement('option');
@@ -173,10 +188,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       opt.selected = prevLangs.includes(lang);
       langSel.appendChild(opt);
     });
+    updateSelectPlaceholder(langSel, '🌐 Language');
 
     // Populate tag select
     const tagSel = document.getElementById('tag-filter');
-    const prevTags = [...tagSel.options].filter(o => o.selected).map(o => o.value);
+    const prevTags = [...tagSel.options].filter(o => o.selected && o.value).map(o => o.value);
     tagSel.innerHTML = '';
     [...tags].sort().forEach(tag => {
       const opt = document.createElement('option');
@@ -185,6 +201,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       opt.selected = prevTags.includes(tag);
       tagSel.appendChild(opt);
     });
+    updateSelectPlaceholder(tagSel, '🏷 Category');
 
     updateClearBtn();
   }
@@ -192,8 +209,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   function getSelectedFilters() {
     const langSel = document.getElementById('lang-filter');
     const tagSel  = document.getElementById('tag-filter');
-    const langs = new Set([...langSel.options].filter(o => o.selected).map(o => o.value));
-    const tags  = new Set([...tagSel.options].filter(o => o.selected).map(o => o.value));
+    const langs = new Set([...langSel.options].filter(o => o.selected && o.value).map(o => o.value));
+    const tags  = new Set([...tagSel.options].filter(o => o.selected && o.value).map(o => o.value));
     return { langs, tags };
   }
 
@@ -218,16 +235,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Wire filter change events once
   function initFilters() {
-    document.getElementById('lang-filter').addEventListener('change', () => {
-      updateClearBtn(); renderSongList(searchEl.value);
+    const onFilterChange = (sel, placeholder) => {
+      // Remove placeholder option once user makes a real selection
+      const ph = [...sel.options].find(o => !o.value);
+      if (ph && [...sel.options].some(o => o.selected && o.value)) {
+        sel.removeChild(ph);
+      } else if (!ph && ![...sel.options].some(o => o.selected)) {
+        updateSelectPlaceholder(sel, placeholder);
+      }
+      updateClearBtn();
+      renderSongList(searchEl.value);
+    };
+    document.getElementById('lang-filter').addEventListener('change', function() {
+      onFilterChange(this, '🌐 Language');
     });
-    document.getElementById('tag-filter').addEventListener('change', () => {
-      updateClearBtn(); renderSongList(searchEl.value);
+    document.getElementById('tag-filter').addEventListener('change', function() {
+      onFilterChange(this, '🏷 Category');
     });
     document.getElementById('filter-clear').addEventListener('click', () => {
-      [...document.getElementById('lang-filter').options].forEach(o => o.selected = false);
-      [...document.getElementById('tag-filter').options].forEach(o => o.selected = false);
-      updateClearBtn(); renderSongList(searchEl.value);
+      buildFilterRow();  // rebuild fully — easiest way to reset to placeholder state
+      renderSongList(searchEl.value);
     });
   }
 
