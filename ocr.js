@@ -11,8 +11,25 @@ const OCR = (() => {
 
   const $ = id => document.getElementById(id);
 
+  // ── Lazy-load Tesseract.js only when OCR is first used ───
+  let tesseractLoadPromise = null;
+  function loadTesseract() {
+    if (window.Tesseract) return Promise.resolve();
+    if (tesseractLoadPromise) return tesseractLoadPromise;
+    tesseractLoadPromise = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+      s.onload  = resolve;
+      s.onerror = () => reject(new Error('Could not load OCR engine — check your connection'));
+      document.head.appendChild(s);
+    });
+    return tesseractLoadPromise;
+  }
+
   // ── Run OCR on an image file ──────────────────────────────
   async function recognise(file) {
+    setStatus('Loading OCR engine…', 0);
+    await loadTesseract();
     setStatus('Initialising OCR engine…', 0);
 
     const result = await Tesseract.recognize(file, 'eng', {
