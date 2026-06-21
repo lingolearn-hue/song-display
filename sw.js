@@ -1,6 +1,6 @@
 // sw.js — song-display service worker v6.1
 // APP_VERSION must be bumped with every release.
-const APP_VERSION = '9.0';
+const APP_VERSION = '9.4';
 const CACHE       = 'song-display-' + APP_VERSION;
 
 // Files to pre-cache. data.js is intentionally excluded —
