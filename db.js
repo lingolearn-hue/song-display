@@ -96,45 +96,48 @@ const DB = (() => {
     const stored = await getSetting('dataVersion', 0);
     if (stored >= DATA_VERSION) return;
 
+    // Fetch all existing songs/setlists ONCE instead of per-ID round trips.
+    // This turns ~70 sequential IndexedDB transactions into 2.
+    const existingSongs    = await getAllSongs();
+    const existingSongIds  = new Set(existingSongs.map(s => s.id));
+    const existingSetlists = await getAllSetlists();
+    const existingSlIds    = new Set(existingSetlists.map(s => s.id));
+
     // Step 1: remove old copyrighted songs from v0.1/v0.2 (IDs '1'–'6')
     if (stored < 2) {
+      const deletions = [];
       for (const id of ['1','2','3','4','5','6']) {
-        const s = await getSong(id);
-        if (s) await deleteSong(id);
+        if (existingSongIds.has(id)) deletions.push(deleteSong(id));
       }
       for (const id of ['sl1','sl2','sl3']) {
-        try { await wrap(tx('setlists','readwrite').delete(id)); } catch(_) {}
+        if (existingSlIds.has(id)) {
+          deletions.push(wrap(tx('setlists','readwrite').delete(id)).catch(() => {}));
+        }
       }
+      await Promise.all(deletions);
     }
 
     // Step 2: sync ALL demo songs — add any that are missing, never overwrite
-    // user-edited songs (we check by ID only — if it exists, skip it)
-    for (const song of SONGS) {
-      const existing = await getSong(song.id);
-      if (!existing) {
-        await putSong({ ...song });
-      }
-    }
+    // user-edited songs (membership check only, no per-song DB read)
+    const songWrites = SONGS
+      .filter(song => !existingSongIds.has(song.id))
+      .map(song => putSong({ ...song }));
+    await Promise.all(songWrites);
 
     // Step 3: sync ALL demo setlists — add any that are missing
-    const existingSetlists = await getAllSetlists();
-    const existingSlIds = new Set(existingSetlists.map(s => s.id));
-    for (const sl of SETLISTS) {
-      if (!existingSlIds.has(sl.id)) {
-        await putSetlist({ ...sl });
-      }
-    }
+    const slWrites = SETLISTS
+      .filter(sl => !existingSlIds.has(sl.id))
+      .map(sl => putSetlist({ ...sl }));
+    await Promise.all(slWrites);
 
     // Step 4: remove old demo setlists that no longer exist in SETLISTS
-    // (only remove known old IDs, never touch user-created ones)
     const currentSlIds = new Set(SETLISTS.map(s => s.id));
     const oldDemoIds = ['sl-demo-1','sl-demo-2','sl-demo-3','sl-demo-4',
                         'sl-demo-5','sl-demo-6','sl-demo-7'];
-    for (const id of oldDemoIds) {
-      if (!currentSlIds.has(id) && existingSlIds.has(id)) {
-        await deleteSetlist(id);
-      }
-    }
+    const slDeletions = oldDemoIds
+      .filter(id => !currentSlIds.has(id) && existingSlIds.has(id))
+      .map(id => deleteSetlist(id));
+    await Promise.all(slDeletions);
 
     await setSetting('dataVersion', DATA_VERSION);
   }
