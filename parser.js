@@ -133,11 +133,20 @@ const Parser = (() => {
       // Other directives — skip
       if (/^\{[^}]+\}$/.test(trimmed)) return;
 
+      // Bracket-style section marker: [Verse 1], [Chorus], [Bridge] etc.
+      // (handles content pasted directly without going through tabStyleToChordPro)
+      const bracketSection = isSectionMarker(trimmed);
+      if (bracketSection !== null) {
+        pushSection();
+        current = { label: bracketSection, lines: [] };
+        return;
+      }
+
       // Empty line → section boundary
       if (!trimmed) { pushSection(); return; }
 
-      // Has inline [Chord] tokens?
-      if (/\[[A-G][^\]]*\]/.test(trimmed)) {
+      // Has true inline [Chord]lyric tokens? (not a bare section marker)
+      if (hasInlineChordTokens(trimmed)) {
         current.lines.push(retokenise(trimmed, semitones));
       } else {
         // Plain lyric line
@@ -149,6 +158,32 @@ const Parser = (() => {
     return sections;
   }
 
+  // ── Section marker detection ──────────────────────────────
+  // Recognises common bracket-style section headers like [Verse 1], [Chorus],
+  // [Bridge], [Intro], [Outro], [Pre-Chorus], etc. These are NOT chord tokens
+  // even though e.g. "[Chorus]" starts with a letter in A-G — distinguished
+  // by checking the bracket contents against known section words.
+  const SECTION_WORDS = /^(verse|chorus|bridge|intro|outro|pre-?chorus|refrain|hook|interlude|tag|ending|coda|vamp|breakdown|instrumental)\b/i;
+
+  function isSectionMarker(line) {
+    const t = line.trim();
+    const m = t.match(/^\[([^\]]+)\]$/);
+    if (!m) return null;
+    const inner = m[1].trim();
+    if (SECTION_WORDS.test(inner)) return inner;
+    return null;
+  }
+
+  // ── Is this an inline ChordPro chord token line? ──────────
+  // True ChordPro lines have [Chord] immediately followed by lyric text
+  // on the SAME line, e.g. "[C]Amazing [G7]grace". A bracket that is the
+  // ENTIRE line content (with nothing else) is a section marker, not a chord.
+  function hasInlineChordTokens(line) {
+    const t = line.trim();
+    if (isSectionMarker(t)) return false;
+    return /\[[A-G][#b]?[^\]]*\]/.test(t);
+  }
+
   // ── Tab-style chord-line detector ────────────────────────
   function isChordLine(line) {
     const t = line.trim();
@@ -158,6 +193,11 @@ const Parser = (() => {
     return tokens.length > 0 && chordLike / tokens.length >= 0.75;
   }
 
+  // Merge a chord-line + lyric-line pair into ChordPro inline format.
+  // Chord column positions are snapped to the nearest word-start in the lyric
+  // line (within a small tolerance), since real-world chord sheets are often
+  // off by 1-2 characters due to copy-paste/whitespace inconsistencies, while
+  // chords are conventionally intended to align with the start of a word.
   function mergeChordLyricLines(chordLine, lyricLine) {
     const chordRe = /([A-G][#b]?(?:maj|min|m|M|sus|add|aug|dim|[0-9])*(?:\/[A-G][#b]?)?)/g;
     const chords  = [];
@@ -166,9 +206,50 @@ const Parser = (() => {
       chords.push({ pos: m.index, chord: m[0] });
     }
     if (!chords.length) return lyricLine;
+
+    // Find word-start indices in the lyric line (start of string, or any
+    // position right after whitespace)
+    const wordStarts = [];
+    for (let i = 0; i < lyricLine.length; i++) {
+      if (i === 0 && lyricLine[i] !== ' ') wordStarts.push(0);
+      else if (lyricLine[i] !== ' ' && lyricLine[i-1] === ' ') wordStarts.push(i);
+    }
+
+    const TOLERANCE = 3; // max chars to snap a chord position to a word start
+
+    // Greedily assign each chord to its nearest AVAILABLE word start
+    // (closest chord-position/word-start pairs win first), so two close
+    // chords never collapse onto the same word.
+    const availableStarts = [...wordStarts];
+    const candidates = [];
+    chords.forEach((c, ci) => {
+      availableStarts.forEach(ws => {
+        const d = Math.abs(ws - c.pos);
+        if (d <= TOLERANCE) candidates.push({ ci, ws, d });
+      });
+    });
+    candidates.sort((a, b) => a.d - b.d);
+
+    const chordToWordStart = new Map(); // chord index -> assigned word start
+    const usedStarts = new Set();
+    for (const { ci, ws } of candidates) {
+      if (chordToWordStart.has(ci) || usedStarts.has(ws)) continue;
+      chordToWordStart.set(ci, ws);
+      usedStarts.add(ws);
+    }
+
+    const snapped = chords.map((c, ci) => {
+      const finalPos = chordToWordStart.has(ci) ? chordToWordStart.get(ci) : c.pos;
+      return { pos: Math.min(finalPos, lyricLine.length), chord: c.chord };
+    });
+
+    // Ensure positions remain in ascending order (stable sort preserves
+    // original chord order for any ties)
+    snapped.sort((a, b) => a.pos - b.pos);
+
     let result = '', lastPos = 0;
-    chords.forEach(({ pos, chord }) => {
-      const lyricPos = Math.min(pos, lyricLine.length);
+    snapped.forEach(({ pos, chord }) => {
+      const lyricPos = Math.max(pos, lastPos); // never go backwards
       result += lyricLine.slice(lastPos, lyricPos) + '[' + chord + ']';
       lastPos = lyricPos;
     });
@@ -181,11 +262,31 @@ const Parser = (() => {
     const out   = [];
     let i = 0;
     while (i < lines.length) {
-      if (isChordLine(lines[i]) && i + 1 < lines.length && lines[i+1].trim() && !isChordLine(lines[i+1])) {
-        out.push(mergeChordLyricLines(lines[i], lines[i+1]));
+      const line = lines[i];
+      const sectionName = isSectionMarker(line);
+
+      if (sectionName !== null) {
+        // Convert [Verse 1] / [Chorus] → {start_of_verse: Verse 1} etc.
+        const lower = sectionName.toLowerCase();
+        const kind = lower.startsWith('chorus')      ? 'chorus'
+                   : lower.startsWith('bridge')       ? 'bridge'
+                   : lower.startsWith('pre-chorus') || lower.startsWith('prechorus') ? 'verse'
+                   : 'verse';
+        out.push(`{start_of_${kind}: ${sectionName}}`);
+        i++;
+        continue;
+      }
+
+      const nextLine = lines[i+1];
+      const nextIsDirective = nextLine !== undefined && /^\s*\{[^}]+\}\s*$/.test(nextLine);
+
+      if (isChordLine(line) && i + 1 < lines.length && nextLine.trim()
+          && !isChordLine(nextLine) && isSectionMarker(nextLine) === null
+          && !nextIsDirective) {
+        out.push(mergeChordLyricLines(line, nextLine));
         i += 2;
       } else {
-        out.push(lines[i]);
+        out.push(line);
         i++;
       }
     }
@@ -195,11 +296,19 @@ const Parser = (() => {
   // ── Auto-detect format ────────────────────────────────────
   function detectAndNormalise(raw) {
     const text = raw.trim();
-    if (/\[[A-G][^\]]*\]/.test(text)) return { format: 'chordpro', content: text };
     const lines = text.split('\n');
-    if (lines.filter(isChordLine).length >= 2) {
+
+    // True inline ChordPro: at least one line has [Chord]lyric on the same line
+    if (lines.some(hasInlineChordTokens)) {
+      return { format: 'chordpro', content: text };
+    }
+
+    // Tab-style: chord-only lines (ignoring section marker lines) ≥ 2
+    const chordLineCount = lines.filter(l => isSectionMarker(l) === null && isChordLine(l)).length;
+    if (chordLineCount >= 2) {
       return { format: 'chordpro', content: tabStyleToChordPro(text) };
     }
+
     return { format: 'plain', content: text };
   }
 
@@ -214,7 +323,7 @@ const Parser = (() => {
       if (a) artist = a[1].trim();
     }
     if (title) return { title, artist };
-    const textLines = lines.filter(l => !/^\{/.test(l) && !isChordLine(l));
+    const textLines = lines.filter(l => !/^\{/.test(l) && !isChordLine(l) && isSectionMarker(l) === null);
     if (textLines[0]) title = textLines[0].replace(/\[[^\]]*\]/g, '').trim();
     if (textLines[1] && /^by\s/i.test(textLines[1])) artist = textLines[1].replace(/^by\s+/i, '');
     return { title: title || 'Untitled', artist: artist || '' };
@@ -226,5 +335,7 @@ const Parser = (() => {
     detectAndNormalise,
     extractMeta,
     isChordLine,
+    isSectionMarker,
+    hasInlineChordTokens,
   };
 })();
